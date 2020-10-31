@@ -1,0 +1,22 @@
+DOMAINS 
+ocenki=integer* 
+
+PREDICATES 
+nondeterm student(symbol, symbol, symbol, symbol, integer, symbol, ocenki) 
+nondeterm stipendia(integer, symbol, real, symbol)     %новый пользовательский предикат
+
+CLAUSES 
+student(kt,qwe,qwe,qwe,12,b,[5,5,5,5,4]). %ф1
+student(kt,qwe1,qwe1,qwe1,121,b,[5,5,5,5,5]). %ф2
+student(kt,qwe2,qwe2,qwe2,122,b,[5,5,4,5,5]). %ф3
+student(kt,qwe3,qwe3,qwe3,123,b,[5,5,5,5,5]). %ф4
+student(kt,qwe4,qwe4,qwe4,124,b,[5,3,5,5,4]). %ф5
+student(kt,qwe4,qwe4,qwe4,125,k,[5,5,5,5,5]). %ф6
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=b, NAL=da, SUMMA=500*1.5. %пр1
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,4]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр2
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,4,5,5]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр3
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,3,5,5,4]), FORMA=b, NAL=net, SUMMA=0. %пр4
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=k, NAL=net, SUMMA=0. %пр5
+
+GOAL 
+stipendia(NZ,NAL, SUMMA,b). %з1
