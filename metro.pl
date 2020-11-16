@@ -1,20 +1,24 @@
-% Несколько веток метро (минимум 1)
-% У веток есть цвета (либо нумерация)
-% У каждой ветки есть станции (минимум 2)
-% Каждая станция соединена с минимум одной другой станцией
-% Минимум одна станция для двух веток является пересадочной
+% SWI-Prolog 8.2.2
 
-% Задачи:
-% 1) Возможность вывести все цвета (номера) веток. Возможность вывести количество веток.
-% 2) Возможность вывести все станции одной ветки. Возможность вывести количество станций одной ветки.
-% 3) Возможность вывести все пересадки одной ветки. Возможность вывести количество пересадок одной ветки.
-% 4) Возможность вывести маршрут от станции А до станции Б в пределах одной ветки.
-% 5) Возможность вывести маршрут от станции А до станции Б в пределах ДВУХ(может все) веток. Не обязательно самый короткий путь
+% Several metro lines (at least 1)
+% The lines have colors (or numbering)
+% Each line has stations (minimum 2)
+% Each station is connected to at least one other station
+% At least one station for two lines is an interchange
 
-% Выполнено:
+% Tasks:
+% 1) Possibility to display all colors (numbers) of lines. Possibility to display the number of lines.
+% 2) Possibility to display all stations of one line out. Possibility to display the number of stations on one line.
+% 3) Possibility to display all interchange of one line. Possibility to display the number of interchange of one line.
+% 4) Possibility to display the route from station A to station within one line.
+% 5) Possibility to display the route from station A to station B within TWO (maybe all) lines. Not necessarily the shortest path
+
+% Done:
 % 1) findAllLines(), countLine().
 % 2) findAllStations(X), countAllStations(X).
 % 4-5) findRoute(X,Y).
+
+% Not done and not the fact that I will do it 3.))
 
 
 line(
@@ -31,7 +35,7 @@ line(
 
 line(
   green, 
-  [a, b, kanavinskaya,c, d, e]
+  [a, b, kanavinskaya, c, d, e]
   ).
 
 % 1
@@ -68,10 +72,10 @@ findRoute(X,Y,Lines,Output):-
       line(Line,Stations),
       \+ member(Line,Lines),
       member(X,Stations),
-      member(Intermediate,Stations),
-      X\=Intermediate,Intermediate\=Y,
-      append(Output,[[X,Line,Intermediate]],NewOutput),
-      findRoute(Intermediate,Y,[Line|Lines],NewOutput).
+      member(Interchange,Stations),
+      X\=Interchange,Interchange\=Y,
+      append(Output,[[X,Line,Interchange]],NewOutput),
+      findRoute(Interchange,Y,[Line|Lines],NewOutput).
 printRoute([]).
 printRoute([H|T]):-
   format('You have to from ~w take ~w line go to ~w\n', H),
