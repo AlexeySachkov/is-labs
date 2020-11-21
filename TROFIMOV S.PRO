@@ -1,9 +1,9 @@
-% Шашки.Проверка возможности хода.
-% Исходные данные: 
-%   •	коды всех фигур, их цвет и координаты (поле 1-8 на a-h);
-%   •	код ходящей шашки;
-% Результат:
-% Ответ есть ходы или нет 
+% РџСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё С…РѕРґР° РїРµС€РєРѕР№.
+% РСЃС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ
+%   вЂў	РєРѕРґС‹ Рё РєРѕРѕСЂРґРёРЅР°С‚С‹ РІСЃРµС… С„РёРіСѓСЂ РґР»СЏ РєРѕС‚РѕСЂРѕР№ Р°РЅР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С…РѕРґР°.
+%   вЂў	РєРѕРґ С…РѕРґСЏС‰РµР№ С„РёРіСѓСЂС‹;
+% Р’С‹С…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ
+% РћС‚РІРµС‚ РµСЃС‚СЊ РёР»Рё РЅРµС‚ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С…РѕРґР°
 
 
 %    _______________________
@@ -42,19 +42,19 @@ koordinata(f,4).
 koordinata(d,4).
 
 hod_figury(Kod,Color,Sym,Int):-figura(Kod,Color,Sym,Int),perevod(Kod,Color,Sym,Int).%pr1
-%Получаем данные фигуры для которой хотим проверить возможность хода,проверяем существует ли она на доске если да вызываем функцию перевод.
+%РџСЂРѕРІРµСЂСЏРµРј РµСЃС‚СЊ Р»Рё РїРµС€РєР° РґР»СЏ РєРѕС‚РѕСЂРѕР№ РёС‰РµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С…РѕРґР° РЅР° РґРѕСЃРєРµ РµСЃР»Рё РµСЃС‚СЊ Р·Р°РїСѓСЃРєР°РµРј РїСЂР°РІРёР»Рѕ РїРµСЂРµРІРѕРґ.
 
 perevod(Kod,Color,Sym,Int):-Sym="a",figura_per(Kod,Color,1,Int);Sym="b",figura_per(Kod,Color,2,Int);Sym="c",figura_per(Kod,Color,3,Int);Sym="d",figura_per(Kod,Color,4,Int);Sym="e",figura_per(Kod,Color,5,Int);Sym="f",figura_per(Kod,Color,6,Int);Sym="g",figura_per(Kod,Color,7,Int);Sym="h",figura_per(Kod,Color,8,Int).%pr2
-%Переводим данные по местоположения фигуры из формата (symbol,integer) в (integer,integer)
+%РџРµСЂРµРІРѕРґРёРј РєРѕРѕСЂРґРёРЅР°С‚С‹ С„РёРіСѓСЂС‹ РѕС‚ С‚РёРїР° (symbol,integer) Рє С‚РёРїСѓ (integer,integer)
 
 figura_per(Kod,white,Sym,Int):- Sym=1,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym-1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym=8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1).%pr3
-%Проверяем возможность хода если фигура белая т.к она может пойти либо в лево вверх либо вправо вверх,проверяем стоит ли она на краю доски или нет 
+%РС‰РµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С…РѕРґР° РґР»СЏ Р±РµР»РѕР№ С„РёРіСѓСЂС‹,РїСЂРѕРІРµСЂСЏРµРј РІСЃРµ РІР°СЂРёР°РЅС‚С‹ Рё СѓСЃР»РѕРІРёСЏ 
 
 figura_per(Kod,black,Sym,Int):- Sym=1,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym-1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym=8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1).%pr4
-%Аналогично предидущему только проверям ходы для черных пешек
+%РђРЅР°Р»РѕРіРёС‡РЅРѕ РїСЂРµРґ.РїСЂР°РІРёР»Сѓ С‚РѕР»СЊРєРѕ РґР»СЏ С‡РµСЂРЅРѕР№ С„РёРіСѓСЂС‹
 
 figura_o(Kod,Color,Sym,Int):-Sym=1,koordinata(a,Int),not(figura(_,_,a,Int));Sym=2,koordinata(b,Int),not(figura(_,_,b,Int));Sym=3,koordinata(c,Int),not(figura(_,_,c,Int));Sym=4,koordinata(d,Int),not(figura(_,_,d,Int));Sym=5,koordinata(e,Int),not(figura(_,_,e,Int));Sym=6,koordinata(f,Int),not(figura(_,_,f,Int));Sym=7,koordinata(g,Int),not(figura(_,_,g,Int));Sym=8,koordinata(h,Int),not(figura(_,_,h,Int)).%pr5
-%Возвращяем  данные по местоположения фигуры к формату (symbol,integer) 
+%Р’РѕР·РІСЂР°С‰СЏРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ Рє С‚РёРїСѓ (symbol,integer) 
 
 GOAL
 hod_figury(1,white,c,1).
