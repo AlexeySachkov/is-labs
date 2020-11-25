@@ -16,7 +16,7 @@ people(sahsa,m, 1988, 2, sveta, vasya).%f4.
 search_old_brother(X,Y):-people(X,_,Year1,Month1,Par1,Par2), people(Y,m,Year2,Month2,Par1,Par2),Year1>Year2.
 search_old_brother(X,Y):-people(X,_,Year1,Month1,Par1,Par2), people(Y,m,Year2,Month2,Par1,Par2),Year1=Year2,Month1>Month2.
 search_old_sister(X,Y):-people(X,_,Year1,Month1,Par1,Par2), people(Y,w,Year2,Month2,Par1,Par2),Year1>Year2.
-search_old_sister(X,Y):-people(X,_,Year1,Month1,Par1,Par2), people(Y,m,Year2,Month2,Par1,Par2),Year1=Year2,Month1>Month2.
+search_old_sister(X,Y):-people(X,_,Year1,Month1,Par1,Par2), people(Y,w,Year2,Month2,Par1,Par2),Year1=Year2,Month1>Month2.
 
 GOAL
 %people(danil,Pol,Year,Month,Par1,Par2).
