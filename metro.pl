@@ -46,7 +46,7 @@ findAllLines():-findAllLines([]).
 findAllLines(Lines):-
   line(Line,_),
   \+ member(Line,Lines),
-  print(Line).
+  writeln(Line),fail.
 
 % 2
 findAllStations(X):-
