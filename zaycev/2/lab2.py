@@ -88,28 +88,16 @@ class Seller(Agent):
         self.send(message)
 
     def compareFacts(self):
-        informations = []
-        for i in range(len(self.knownKnowledges)):
-            informations.append([])
-            for j in range(len(self.knownBooks)):
-                for k in range(len(self.knownBooks[j])):
-                    if(self.knownBooks[j][k] == self.knownKnowledges[i]):
-                        informations[i].append(j)
-        if(len(informations) == 1 and len(informations[0]) != 1):
+        if(len(self.knownKnowledges) < 2):
             self.ask_for_info()
-            return
-        elif(len(informations) == 1 and len(informations[0]) == 1):
-            self.send_conclusion(informations[0][0])
-            return
-        list1 = informations[0]
-        for i in range(len(informations)-1):
-            list1 = list(set(list1).intersection(informations[i+1]))
-        if(len(list1) > 1):
-            self.ask_for_info()
-            return
         else:
-            self.send_conclusion(list1[0])
-            return
+            for i in range(len(self.knownBooks)):
+                if(self.knownBooks[i][0] == self.knownKnowledges[0] and self.knownBooks[i][1] == self.knownKnowledges[1]):
+                    self.send_conclusion(i)
+                    return
+                if(len(self.knownKnowledges) == 1 and len(self.knownKnowledges[0]) != 1):
+                    self.ask_for_info()
+                    return
 
     def react(self, message):
         super(Seller, self).react(message)
