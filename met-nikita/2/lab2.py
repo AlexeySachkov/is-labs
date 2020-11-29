@@ -131,7 +131,7 @@ class Guide(Agent):
             self.ask_for_info()
         elif message.performative == ACLMessage.QUERY_REF:
             content = json.loads(message.content)
-            if(content != 0):
+            if(content['observation'] != 0):
                 observation = str(content['observation'])
                 self.knownObservations.append(observation)
                 self.compareFacts()
