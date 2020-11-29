@@ -25,6 +25,14 @@ nondeterm hod_figury(integer, symbol, symbol, integer)
 nondeterm figura_o(integer, symbol, integer, integer)
 nondeterm koordinata(symbol,  integer)
 
+PREDICATES 
+nondeterm figura(integer, symbol, symbol, integer)
+nondeterm perevod(integer, symbol, symbol, integer)
+nondeterm figura_per(integer, symbol, integer, integer)
+nondeterm hod_figury(integer)
+nondeterm figura_o(integer, symbol, integer, integer)
+nondeterm koordinata(symbol,  integer)
+
 CLAUSES
 figura(1,white,c,1).%f1
 figura(2,white,f,2).%f2
@@ -34,27 +42,23 @@ figura(5,black,e,5).%f5
 figura(6,black,f,6).%f6
 figura(7,black,a,7).%f7
 
-koordinata(b,2).
-koordinata(d,2).
-koordinata(e,3).
-koordinata(g,3).
-koordinata(f,4).
-koordinata(d,4).
+koordinata(Sym, NewInt) :- Sym="a",NewInt=1;Sym="b",NewInt=2;Sym="c",NewInt=3;Sym="d",NewInt=4;Sym="e",NewInt=5;Sym="f",NewInt=6;Sym="g",NewInt=7;Sym="h",NewInt=8.
+%Правило для замены символьной координаты на цифровую. 
+ 
+hod_figury(Kod):-figura(Kod,Color,Sym,Int),perevod(Kod,Color,Sym,Int).
+%Проверяем есть ли фигура на доске если есть запускаем перевод.
 
-hod_figury(Kod,Color,Sym,Int):-figura(Kod,Color,Sym,Int),perevod(Kod,Color,Sym,Int).%pr1
-%Проверяем есть ли пешка для которой ищем возможность хода на доске если есть запускаем правило перевод.
+perevod(Kod,Color,Sym,Int) :- koordinata(Sym, NewInt),figura_per(Kod,Color,NewInt,Int).
+%Переводим символьную координату в цифровую и запускаем расчет хода.
 
-perevod(Kod,Color,Sym,Int):-Sym="a",figura_per(Kod,Color,1,Int);Sym="b",figura_per(Kod,Color,2,Int);Sym="c",figura_per(Kod,Color,3,Int);Sym="d",figura_per(Kod,Color,4,Int);Sym="e",figura_per(Kod,Color,5,Int);Sym="f",figura_per(Kod,Color,6,Int);Sym="g",figura_per(Kod,Color,7,Int);Sym="h",figura_per(Kod,Color,8,Int).%pr2
-%Переводим координаты фигуры от типа (symbol,integer) к типу (integer,integer)
+figura_per(Kod,white,Sym,Int):- Sym=1,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym-1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym=8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1).
+%Нахождение возможности хода для белых фигур с учетом условий.
 
-figura_per(Kod,white,Sym,Int):- Sym=1,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym>1,Sym<8,Int<8,Sym1=Sym-1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1);Sym=8,Int<8,Sym1=Sym+1,Int1=Int+1,figura_o(Kod,white,Sym1,Int1).%pr3
-%Ищем возможность хода для белой фигуры,проверяем все варианты и условия 
+figura_per(Kod,black,Sym,Int):- Sym=1,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym-1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym=8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1).
+%Нахождение возможности хода для черных фигур с учетом условий.
 
-figura_per(Kod,black,Sym,Int):- Sym=1,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym>1,Sym<8,Int>1,Sym1=Sym-1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1);Sym=8,Int>1,Sym1=Sym+1,Int1=Int-1,figura_o(Kod,black,Sym1,Int1).%pr4
-%Аналогично пред.правилу только для черной фигуры
-
-figura_o(Kod,Color,Sym,Int):-Sym=1,koordinata(a,Int),not(figura(_,_,a,Int));Sym=2,koordinata(b,Int),not(figura(_,_,b,Int));Sym=3,koordinata(c,Int),not(figura(_,_,c,Int));Sym=4,koordinata(d,Int),not(figura(_,_,d,Int));Sym=5,koordinata(e,Int),not(figura(_,_,e,Int));Sym=6,koordinata(f,Int),not(figura(_,_,f,Int));Sym=7,koordinata(g,Int),not(figura(_,_,g,Int));Sym=8,koordinata(h,Int),not(figura(_,_,h,Int)).%pr5
-%Возвращяем координаты к типу (symbol,integer) 
+figura_o(Kod,Color,NewInt,Int):- koordinata(Sym, NewInt),not(figura(_,_,Sym,Int)).
+%Проводим обратную заменую цифровой координаты на символьную и проверяем свободно ли поле на которое собираемся ходить. 
 
 GOAL
-hod_figury(1,white,c,1).
+hod_figury(1).
