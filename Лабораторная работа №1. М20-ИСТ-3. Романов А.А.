@@ -1,22 +1,25 @@
 DOMAINS 
-ocenki=integer* 
+ocenki=integer* //область доменов, указываем, что "оценки" - это массив данных
 
 PREDICATES 
-nondeterm student(symbol, symbol, symbol, symbol, integer, symbol, ocenki) 
-nondeterm stipendia(integer, symbol, real, symbol)     %новый пользовательский предикат
+nondeterm student(symbol, symbol, symbol, symbol, integer, symbol, ocenki) //область предикатов, предикат "студент" имеет аргументы "название группы", "имя", "фамилия", "отчество", "номер зачетки", "форма обучения", массив оценок
+nondeterm stipendia(integer, symbol, real, symbol)     %новый пользовательский предикат //область предикатов, предикат "стипендия" имеет аргументы "номер зачетки", "наличие стипендии", "сумма стипендии", "форма обучения"
 
 CLAUSES 
-student(kt,qwe,qwe,qwe,12,b,[5,5,5,5,4]). %ф1
-student(kt,qwe1,qwe1,qwe1,121,b,[5,5,5,5,5]). %ф2
-student(kt,qwe2,qwe2,qwe2,122,b,[5,5,4,5,5]). %ф3
-student(kt,qwe3,qwe3,qwe3,123,b,[5,5,5,5,5]). %ф4
-student(kt,qwe4,qwe4,qwe4,124,b,[5,3,5,5,4]). %ф5
-student(kt,qwe4,qwe4,qwe4,125,k,[5,5,5,5,5]). %ф6
-stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=b, NAL=da, SUMMA=500*1.5. %пр1
-stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,4]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр2
-stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,4,5,5]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр3
-stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,3,5,5,4]), FORMA=b, NAL=net, SUMMA=0. %пр4
-stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=k, NAL=net, SUMMA=0. %пр5
+student(kt,qwe,qwe,qwe,12,b,[5,5,5,5,4]). %ф1 //область фактов и правил, определяем студента согласно параметрам, указанным выше
+student(kt,qwe1,qwe1,qwe1,121,b,[5,5,5,5,5]). %ф2 //аналогично ф1
+student(kt,qwe2,qwe2,qwe2,122,b,[5,5,4,5,5]). %ф3 //аналогично ф1
+student(kt,qwe3,qwe3,qwe3,123,b,[5,5,5,5,5]). %ф4 //аналогично ф1
+student(kt,qwe4,qwe4,qwe4,124,b,[5,3,5,5,4]). %ф5 //аналогично ф1
+student(kt,qwe4,qwe4,qwe4,125,k,[5,5,5,5,5]). %ф6 //аналогично ф1
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=b, NAL=da, SUMMA=500*1.5. %пр1 //область фактов и правил, проверяем введенные данные из запроса: NZ - номер зачетки, NAL - наличие стипендии (да/нет), SUMMA - сумма стипендии, FORMA - форма обучения.
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,4]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр2 //аналогично пр1
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,4,5,5]), FORMA=b, NAL=da, SUMMA=500*1.25. %пр3 //аналогично пр1
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,3,5,5,4]), FORMA=b, NAL=net, SUMMA=0. %пр4 //аналогично пр1
+stipendia(NZ,NAL, SUMMA, FORMA):- student(_,_,_,_,NZ,FORMA,[5,5,5,5,5]), FORMA=k, NAL=net, SUMMA=0. %пр5 //аналогично пр1
 
 GOAL 
-stipendia(NZ,NAL, SUMMA,b). %з1
+stipendia(NZ,NAL, SUMMA,b). %з1 //область запроса, делаем запрос: "Показать наличие студентов на бюджете, указав номер зачетки, наличие стипендии (да/нет) и сумму стипендии"
+
+
+
