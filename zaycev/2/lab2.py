@@ -107,8 +107,6 @@ class Seller(Agent):
         if(len(list1) > 1):
             self.ask_for_info()
             return
-        elif(len(list1) < 1):
-            self.send_refuse()
         else:
             self.send_conclusion(list1[0])
             return
