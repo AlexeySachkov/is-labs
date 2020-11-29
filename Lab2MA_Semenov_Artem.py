@@ -80,7 +80,7 @@ class Herbal_shop(Agent):
             self.number = int(content1['number'])
             self.happy = True
             message = ACLMessage()
-            display_message(self.aid.localname, "Магазин получил предложение на 10 трав типа: {}".format(self.type))
+            display_message(self.aid.localname, "Магазин получил предложение на {} трав типа: {}".format(self.number, self.type))
             if self.storage[self.type] >= self.number:
                 display_message(self.aid.localname, "В магазине есть нужно количество такого вида трав: {}".format(self.type))
                 message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
