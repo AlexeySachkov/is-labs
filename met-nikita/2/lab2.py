@@ -41,11 +41,22 @@ class Guided(Agent):
         message.set_content(json.dumps({'observation': observation}))
         message.add_receiver(AID(name="guide@localhost:8011"))
         self.send(message)
+    
+    def send_no_more(self):
+        display_message(self.aid.localname, "I don't see anything else.")
+        message = ACLMessage()
+        message.set_performative(ACLMessage.QUERY_REF)
+        message.set_content(json.dumps({'observation': 0}))
+        message.add_receiver(AID(name="guide@localhost:8011"))
+        self.send(message)
 
     def react(self, message):
         super(Guided, self).react(message)
         if message.performative == ACLMessage.NOT_UNDERSTOOD:
-            self.send_info()
+            if(self.timesAsked < len(self.observed)):
+                self.send_info()
+            else:
+                self.send_no_more()
         if message.performative == ACLMessage.PROPOSE:
             content = json.loads(message.content)
             location = str(content['location'])
@@ -120,9 +131,12 @@ class Guide(Agent):
             self.ask_for_info()
         elif message.performative == ACLMessage.QUERY_REF:
             content = json.loads(message.content)
-            observation = str(content['observation'])
-            self.knownObservations.append(observation)
-            self.compareFacts()
+            if(content != 0):
+                observation = str(content['observation'])
+                self.knownObservations.append(observation)
+                self.compareFacts()
+            else:
+                self.send_refuse()
 
 
 
