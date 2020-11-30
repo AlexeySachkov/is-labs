@@ -6,3 +6,37 @@
 
 
 P.S. Я использовл перформативы не в соотвествии с их назначением, потому что было сложно подобрать под некоторые ситуации нужный перформатив. 
+Пример выполнения программы: 1 случай - уровень проницательности у гражданских больше, чем уровень лжи у мафии
+[lisa_civil1] 30/11/2020 10:05:33.298 --> ~Моя проницательность: 58~
+[lisa_civil1] 30/11/2020 10:05:33.299 --> ~Моё убеждение: 46~
+[johny_mafia] 30/11/2020 10:05:33.306 --> ~Мой уровень лжи: 51~
+[mark_civil2] 30/11/2020 10:05:33.312 --> ~Моя проницательность: 65~
+[mark_civil2] 30/11/2020 10:05:33.313 --> ~Моё убеждение: 67~
+[lisa_civil1] 30/11/2020 10:05:33.319 --> Johny, you are disgusting! You are mafia!
+[johny_mafia] 30/11/2020 10:05:33.324 --> I did not hit her, it's not true, I did not hit her. I did not. Oh hi Mark. Lisa is Mafia!
+[mark_civil2] 30/11/2020 10:05:33.327 --> Holly Molly, Johny is Mafia! KILL THEM ALL.
+[lisa_civil1] 30/11/2020 10:05:33.329 --> We kill Johny and he is a Mafia. Congratulation, Mark!
+2 случай - уровень проницательности у одного гр. выше чем у мафии, у другого ниже. Тогда по итогам голосвания за каждого участника будет равное количетсво
+голосов. Поэтому Лиза пытается убедить марка в своей невиновности.
+[lisa_civil1] 30/11/2020 10:03:33.310 --> ~Моя проницательность: 62~
+[lisa_civil1] 30/11/2020 10:03:33.311 --> ~Моё убеждение: 49~
+[johny_mafia] 30/11/2020 10:03:33.318 --> ~Мой уровень лжи: 54~
+[mark_civil2] 30/11/2020 10:03:33.322 --> ~Моя проницательность: 51~
+[mark_civil2] 30/11/2020 10:03:33.323 --> ~Моё убеждение: 56~
+[lisa_civil1] 30/11/2020 10:03:33.327 --> Johny, you are disgusting! You are mafia!
+[johny_mafia] 30/11/2020 10:03:33.332 --> Oh, what a story Mark! You are mafia!
+[mark_civil2] 30/11/2020 10:03:33.335 --> Hmm, seems like Lisa is Mafia!
+[lisa_civil1] 30/11/2020 10:03:33.338 --> Mark, lets talk, I am not a Mafia. Trust me!
+[mark_civil2] 30/11/2020 10:03:33.340 --> No, Lisa. You are mafia. Me and Johny will crush you!
+[johny_mafia] 30/11/2020 10:03:33.343 --> I’m so happy I have Mark as my best friend, lets kill this traitor!
+[lisa_civil1] 30/11/2020 10:03:33.345 --> You kill me...But... I wasn't a mafia... Live in disgusting world you made...
+3 случай. У обоих гр. меньше уровень проницателности, чем уровень лжи у мафии.
+[lisa_civil1] 30/11/2020 10:06:39.792 --> ~Моя проницательность: 40~
+[lisa_civil1] 30/11/2020 10:06:39.793 --> ~Моё убеждение: 52~
+[johny_mafia] 30/11/2020 10:06:39.799 --> ~Мой уровень лжи: 54~
+[mark_civil2] 30/11/2020 10:06:39.804 --> ~Моя проницательность: 52~
+[mark_civil2] 30/11/2020 10:06:39.804 --> ~Моё убеждение: 49~
+[lisa_civil1] 30/11/2020 10:06:39.808 --> I think, Mark is Mafia!
+[johny_mafia] 30/11/2020 10:06:39.813 --> Thanks Mark. I am so glad to have you as my best friend! Lisa is mafia!
+[mark_civil2] 30/11/2020 10:06:39.816 --> Hmm, seems like Lisa is Mafia!
+[lisa_civil1] 30/11/2020 10:06:39.819 --> You kill me...But... I wasn't a mafia... Live in disgusting world you made...
