@@ -1,3 +1,11 @@
+/*
+Definition of grandfather and grandmother.
+Initial data:
+– Person's code, his gender, his parent's code1, his parent's code2
+- Person code
+Result:
+Human code, grandfather code, grandmother code.
+*/
 PREDICATES
 
 nondeterm human(symbol,symbol,symbol,symbol)
