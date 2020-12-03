@@ -117,7 +117,7 @@ class Seller(Agent):
             return 45
         elif self.type == "Cabbage":
             return 20
-        elif self.type == "Cabbage":
+        elif self.type == "Onion":
             return 15
 
     def available_quantity(self):
