@@ -31,9 +31,7 @@ public class TransportCompanyAgent extends Agent
                     System.out.println(getLocalName() + ": message from " + msg.getSender().getLocalName() + " was received");
                     if (DestinationPoint.equals(msg.getContent().toUpperCase()))
                         System.out.println(getLocalName() + ": order was accepted");
-                         if (msg.getPerformative() == ACLMessage.INFORM) {
-                            System.out.println(DestinationPoint+" successfully");
-                            System.out.println("Transport Company = "+getLocalName())};
+           
                     else
                         System.out.println(getLocalName() + ": order was rejected");
                 }
