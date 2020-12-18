@@ -13,6 +13,7 @@ class Client(Agent):
         super(Client, self).__init__(aid=aid, debug=False)
         self.satiety = ''
         self.money = 1500
+        self.order_price = 1500
         self.i_want = ['cыром','картошкой','колбасой',
                        'креветками','курицой','грибами',
                        'перцем','ананасами']
@@ -52,7 +53,7 @@ class Client(Agent):
                 display_message(self.aid.localname, "Клиент получил {}".format(self.bag))
                 message = ACLMessage()
                 message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
-                money = 1500 - self.money
+                money = self.order_price - self.money
                 message.set_content(json.dumps({'money': money}))
                 message.add_receiver(AID(name="agent_deliveryman@localhost:8033"))
                 self.send(message)
