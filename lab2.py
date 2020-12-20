@@ -2,7 +2,7 @@
 #происходит выбор книги и оплата
 # Клиент здаровается и начинает выбирать книги по жанрам. Когда он собирает то, что хочет оплачивает покупку.
 #Если денег не хватает просит скидку.
-
+#
 import json
 import random
 from pade.acl.messages import ACLMessage
@@ -80,7 +80,7 @@ class Client(Agent):
             else:
                 if self.money >= price:
                     display_message(self.aid.localname, "Огромное спасибо!! Я покупаю")
-                    display_message(self.aid.localname, "Пиццу {}".format(self.satiety))
+                    display_message(self.aid.localname, "Книгу {}".format(self.satiety))
                     display_message(self.aid.localname, "По цене {}".format(price))
                     self.money -= price
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
@@ -105,7 +105,7 @@ class Client(Agent):
             self.bag = content['bag']
             if ends ==1:
                 display_message(self.aid.localname, "Нет спасибо. Удачного дня!")
-                display_message(self.aid.localname, "Я передал {}".format(self.bag))
+                display_message(self.aid.localname, "Я получил {}".format(self.bag))
                 message.set_performative(ACLMessage.REJECT_PROPOSAL)
                 message.set_content(json.dumps({'cause': "exactly_the_end"}))
                 message.add_receiver(AID(name="agent_book_store@localhost:8022"))
@@ -182,7 +182,7 @@ class Book_store(Agent):
                 message = ACLMessage()
                 message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                 message.set_content(json.dumps({'money': money, 'name': 'seller'}))
-                message.add_receiver(AID(name="agent_pizzeria@localhost:8011"))
+                message.add_receiver(AID(name="agent_client@localhost:8011"))
                 self.send(message)
                 
 
