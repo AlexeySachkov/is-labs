@@ -43,15 +43,7 @@ public class SellerFromShop extends Agent {
         System.out.println("Seller-agent "+getAID().getName()+" terminating.");
     }
 
-    public void updateCatalogue(final String title, final int price) {
-        addBehaviour(new OneShotBehaviour() {
-            public void action() {
-                catalogue.put(title, new Integer(price));
-                System.out.println(title+" inserted into catalogue. Price = "+price);
-            }
-        });
-    }
-
+   
     private class OfferRequestsServer extends CyclicBehaviour {
         public void action() {
             MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
