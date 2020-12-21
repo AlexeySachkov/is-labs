@@ -18,14 +18,23 @@ class Client(Agent):
         super(Client, self).on_start()
         display_message(self.aid.localname, 'sending Message...')
 				
-        call_later(8.0, self.asking_ticket_price)
-        call_later(10.0, self.buy_the_ticket)
+        
         call_later(12.0, self.asking_food_price)
         call_later(14.0, self.buy_the_food)
+        call_later(16.0, self.asking_ticket_price)
 
     def asking_ticket_price(self):
-        display_message(self.aid.localname, 'Going to meet ticket saler')
-        msg = "I need to buy the ticket. What is the price?"
+        display_message(self.aid.localname, 'Going to the ticket saler')
+        msg = "I need to buy a ticket. What is the price?"
+        message = ACLMessage(ACLMessage.INFORM)
+        message.add_receiver(AID('ticket_saler'))
+        message.set_content(msg)
+        self.send(message)
+
+    def buy_the_ticket(self):
+
+        display_message(self.aid.localname, 'Giving money to the ticket saler')
+        msg = "Here is the money?"
         message = ACLMessage(ACLMessage.INFORM)
         message.add_receiver(AID('ticket_saler'))
         message.set_content(msg)
@@ -49,32 +58,20 @@ class Client(Agent):
         message.set_content(msg)
         self.send(message)
 
-
-    def buy_the_ticket(self):
-
-        display_message(self.aid.localname, 'Giving money to the ticket saler')
-        msg = "Here is the money?"
-        message = ACLMessage(ACLMessage.INFORM)
-        message.add_receiver(AID('ticket_saler'))
-        message.set_content(msg)
-        self.send(message)
-
     def react(self, message):
         super(Client, self).react(message)
-        
         if (message.sender.name.split('@')[0]=="ticket_saler"):
 
             display_message(self.aid.localname, 'Message received from {}'.format(message.sender.name.split('@')))
 
             print("Msg from Ticket Saler = ",message.content)
-            if message.content == "Thank You" :
-                self.clientWealth -= self.ticketPrice
-                display_message(self.aid.localname, "I bought the ticket")
-        			
-            else:
+            if message.content !="Thank You" :
                 self.ticketPrice = message.content 
                 print("Ticket price is ",message.content )
                 display_message(self.aid.localname, "I'm going to buy the ticket")
+                self.buy_the_ticket()
+                self.clientWealth -= self.ticketPrice
+                display_message(self.aid.localname, "I bought the ticket")
 
         elif (message.sender.name.split('@')[0]=="food_saler"):
 
@@ -89,3 +86,5 @@ class Client(Agent):
                 self.foodPrice = message.content 
                 print("Food price is ",message.content )
                 display_message(self.aid.localname, "I'm going to buy the popcorn and pepsi")
+           
+
