@@ -10,7 +10,7 @@ class TransportCompanyAgent(Agent):
     def __init__(self, aid):
         super(TransportCompanyAgent, self).__init__(aid=aid, debug=False)  
         self.TransportCompanyAgentPos=1 
-        self.price = 0
+        
 
     def react(self, message):
         super(TransportCompanyAgent, self).react(message)
@@ -24,24 +24,22 @@ class TransportCompanyAgent(Agent):
 
             if priceClient <=5000:
 		
-		self.price += 1000
-		print(self.price)
 		
-                if self.price == 5000:
+                if self.priceClient == 5000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
                     display_message(self.aid.localname, "Отвезу")
 					self.TransportCompanyAgentPos =0
                     message.set_content(json.dumps({'TransportCompanyAgentPos':0}))
 		
-                elif self.price <= 3000:
+                elif self.priceClient >= 3000 & self.priceClient <4000:
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Может повысим цену?")
                     self.TransportCompanyAgentPos = 1
                     message.set_content(json.dumps({'TransportCompanyAgentPos':1}))
 		
-                elif self.price == 4000 :
+                elif self.priceClient == 4000 :
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Отвезу")
@@ -53,15 +51,14 @@ class TransportCompanyAgent(Agent):
 
             elif priceClient > 5000:
 
-                self.price+=1000
-                print(self.price)
-                if self.price == 6000:
+               
+                if self.priceClient == 6000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
                     display_message(self.aid.localname, "Отвезу")
 					self.TransportCompanyAgentPos =1
                     message.set_content(json.dumps({'TransportCompanyAgentPos':1}))
-                elif self.price >= 4000 & self.price <= 7000:
+                elif self.priceClient >= 5000 & self.priceClient <= 7000:
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Так и быть, отвезу")
@@ -123,7 +120,7 @@ if __name__ == '__main__':
 # [ClientAgent] 18/12/2020 14:34:31.171 --> Согласен
 
 # [ClientAgent] 18/12/2020 14:34:31.171 --> Sending Value
-# [ClientAgent] 18/12/2020 14:34:31.173 --> Хочу отправить посылку по цене : 2000	
+# [ClientAgent] 18/12/2020 14:34:31.173 --> Хочу отправить посылку по цене : 3000	
 # [TransportCompanyAgent] 18/12/2020 14:34:31.166 --> Может повысим цену?
 # [ClientAgent] 18/12/2020 14:34:31.171 --> Подумаю
 
