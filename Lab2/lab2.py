@@ -22,9 +22,8 @@ class TransportCompanyAgent(Agent):
             display_message(self.aid.localname, "Хочу отправить посылку по цене : {}".format(priceClient))
             message = ACLMessage()
 
-            if priceClient <=5000:
-		
-		
+       
+	
                 if self.priceClient == 5000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
@@ -47,9 +46,6 @@ class TransportCompanyAgent(Agent):
                     message.set_content(json.dumps({'TransportCompanyAgentPos':0}))
 
                 self.send(message)
-
-
-            elif priceClient > 5000:
 
                
                 if self.priceClient == 6000:
