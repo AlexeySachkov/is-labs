@@ -95,3 +95,21 @@ if __name__ == '__main__':
     agents.append(chooser)
     agents.append(solver)
     start_loop(agents)
+
+# [chooser] 21/12/2020 17:08:09.649 --> ['Belov', 'Aparkin', 'Karenina', 'Tolstoy', 'Kolimochkin', 'Spiridonova', 'Melnik', 'Folkin', 'Galkin', 'Vdovina', 'Milova', 'Samsonova', 'Morkin']
+# [chooser] 21/12/2020 17:08:09.649 --> Let Vdovina be the headman!
+# [solver] 21/12/2020 17:08:09.654 --> Vdovina has bad rating. We can't choose him. Choose another
+# [chooser] 21/12/2020 17:08:09.657 --> Okey, i choose another one.
+# [chooser] 21/12/2020 17:08:09.657 --> ['Belov', 'Aparkin', 'Karenina', 'Tolstoy', 'Kolimochkin', 'Spiridonova', 'Melnik', 'Folkin', 'Galkin', 'Milova', 'Samsonova', 'Morkin']
+# [chooser] 21/12/2020 17:08:09.658 --> Let Belov be the headman!
+# [solver] 21/12/2020 17:08:09.663 --> Belov has bad rating. We can't choose him. Choose another
+# [chooser] 21/12/2020 17:08:09.666 --> Okey, i choose another one.
+# [chooser] 21/12/2020 17:08:09.666 --> ['Aparkin', 'Karenina', 'Tolstoy', 'Kolimochkin', 'Spiridonova', 'Melnik', 'Folkin', 'Galkin', 'Milova', 'Samsonova', 'Morkin']
+# [chooser] 21/12/2020 17:08:09.667 --> Let Kolimochkin be the headman!
+# [solver] 21/12/2020 17:08:09.671 --> Kolimochkin has bad rating. We can't choose him. Choose another
+# [chooser] 21/12/2020 17:08:09.674 --> Okey, i choose another one.
+# [chooser] 21/12/2020 17:08:09.674 --> ['Aparkin', 'Karenina', 'Tolstoy', 'Spiridonova', 'Melnik', 'Folkin', 'Galkin', 'Milova', 'Samsonova', 'Morkin']
+# [chooser] 21/12/2020 17:08:09.675 --> Let Melnik be the headman!
+# [solver] 21/12/2020 17:08:09.678 --> Okey, we may make Melnik the headman.
+# [chooser] 21/12/2020 17:08:09.681 --> yay, Melnik will be the headman!1!
+# [solver] 21/12/2020 17:08:09.684 --> Fine.
