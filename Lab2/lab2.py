@@ -23,21 +23,24 @@ class TransportCompanyAgent(Agent):
             message = ACLMessage()
 
             if priceClient <=5000:
-
-				self.price+=1
-                print(self.price)
+		
+		self.price += 1000
+		print(self.price)
+		
                 if self.price == 5000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
                     display_message(self.aid.localname, "Отвезу")
 					self.TransportCompanyAgentPos =0
                     message.set_content(json.dumps({'TransportCompanyAgentPos':0}))
-                elif self.price < 3000:
+		
+                elif self.price <= 3000:
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Может повысим цену?")
                     self.TransportCompanyAgentPos = 1
                     message.set_content(json.dumps({'TransportCompanyAgentPos':1}))
+		
                 elif self.price == 4000 :
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
@@ -50,7 +53,7 @@ class TransportCompanyAgent(Agent):
 
             elif priceClient > 5000:
 
-                self.price+=1
+                self.price+=1000
                 print(self.price)
                 if self.price == 6000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
@@ -93,7 +96,8 @@ class ClientAgent(Agent):
         elif message.performative == ACLMessage.REJECT_PROPOSAL:
             content = json.loads(message.content)
             TransportCompanyAgentPos = int(content['TransportCompanyAgentPos'])
-            self.sendValue(priceClient)
+	    self.priceClient = =random.randint(3000,7000)
+            self.sendValue()
             if TransportCompanyAgentPos == 1:
                 display_message(self.aid.localname, "Подумаю")
             elif TransportCompanyAgentPos == 0:
