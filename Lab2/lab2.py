@@ -24,21 +24,21 @@ class TransportCompanyAgent(Agent):
 
        
 	
-                if self.priceClient == 5000:
+                if priceClient == 5000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
                     display_message(self.aid.localname, "Отвезу")
 					self.TransportCompanyAgentPos =0
                     message.set_content(json.dumps({'TransportCompanyAgentPos':0}))
 		
-                elif self.priceClient >= 3000 & self.priceClient <4000:
+                elif priceClient >= 3000 & priceClient <4000:
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Может повысим цену?")
                     self.TransportCompanyAgentPos = 1
                     message.set_content(json.dumps({'TransportCompanyAgentPos':1}))
 		
-                elif self.priceClient == 4000 :
+                elif priceClient == 4000 :
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Отвезу")
@@ -48,13 +48,13 @@ class TransportCompanyAgent(Agent):
                 self.send(message)
 
                
-                if self.priceClient == 6000:
+                if priceClient == 6000:
                     message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))               
                     display_message(self.aid.localname, "Отвезу")
 					self.TransportCompanyAgentPos =1
                     message.set_content(json.dumps({'TransportCompanyAgentPos':1}))
-                elif self.priceClient >= 5000 & self.priceClient <= 7000:
+                elif priceClient >= 5000 & priceClient <= 7000:
                     message.set_performative(ACLMessage.REJECT_PROPOSAL)
                     message.add_receiver(AID(name="ClientAgent@localhost:8011"))
                     display_message(self.aid.localname, "Так и быть, отвезу")
