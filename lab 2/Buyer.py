@@ -42,7 +42,7 @@ class Buyer(Agent):
 
     def reject_proposal(self):
         self.send_message(
-            ACLMessage.REJECT_PROPOSAL, "."
+            ACLMessage.REJECT_PROPOSAL, "Можете уступить некоторую сумму?."
         )
 
     def refuse_a_deal(self):
