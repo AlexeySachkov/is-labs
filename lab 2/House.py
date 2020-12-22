@@ -20,7 +20,7 @@ class House (object):
     def reduce_price_by(self, value: int):
         self.set_new_price(self.current_price - value)
 
-    def __set_new_price(self, new_price: int):
+    def set_new_price(self, new_price: int):
         if new_price > self.MIN_PRICE:
             self.current_price = new_price
         else:
