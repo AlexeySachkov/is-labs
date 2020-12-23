@@ -11,7 +11,7 @@ from pade.acl.aid import AID
 class Client(Agent):
     def __init__(self, aid):
         super(Client, self).__init__(aid=aid, debug=False)
-        self.price = int(random.randint(100, 300))
+        self.money = int(random.randint(100, 300))
         self.type_room = ['эконом', 'стандарт', 'люкс', 'президентский']
 
     def react(self, message):
