@@ -1,0 +1,263 @@
+# викторина
+
+import json
+import random
+from pade.misc.utility import display_message
+from pade.acl.messages import ACLMessage
+from pade.acl.aid import AID
+from pade.core.agent import Agent
+
+
+rand_num = random.randint(0, 5)
+
+class Leader(Agent):
+    def __init__(self, aid):
+        super(Leader, self).__init__(aid=aid, debug=False)
+        self.mark_counter = 0
+
+    def on_start(self):
+        super().on_start()
+        self.call_later(10, self.send_proposal)
+
+    def send_proposal(self):
+        display_message(self.aid.localname, "Здравствуйте, вы готовы?")
+
+        message = ACLMessage()
+        message.set_performative(ACLMessage.PROPOSE)
+        message.add_receiver(AID(name="person@localhost:8011"))
+        self.send(message)
+
+    def react(self, message):
+        super(Leader, self).react(message)
+
+        if message.performative == ACLMessage.ACCEPT_PROPOSAL:
+            content = json.loads(message.content)
+            ask = content['questions']
+            if ask == 1:
+                display_message(self.aid.localname, "Из чего состоит горб у верблюда?")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'questions': ask}))
+                message.add_receiver(AID(name="person@localhost:8011"))
+                self.send(message)
+            elif ask == 2:
+                flag = content['flag']
+                if flag:
+                    self.mark_counter += 1
+                display_message(self.aid.localname, "Как назывались античные жрецы, предсказывавшие будущее?")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'questions': ask}))
+                message.add_receiver(AID(name="person@localhost:8011"))
+                self.send(message)
+
+            elif ask == 3:
+                flag = content['flag']
+                if flag:
+                    self.mark_counter += 1
+                display_message(self.aid.localname,
+                                "В какой стране уже более 600 лет никак не может упасть Пизанская башня?")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'questions': ask}))
+                message.add_receiver(AID(name="person@localhost:8011"))
+                self.send(message)
+
+            elif ask == 4:
+                flag = content['flag']
+                if flag:
+                    self.mark_counter += 1
+                display_message(self.aid.localname, "Кто такой Иммануил Кант?")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'questions': ask}))
+                message.add_receiver(AID(name="person@localhost:8011"))
+                self.send(message)
+
+            elif ask == 5:
+                flag = content['flag']
+                if flag:
+                    self.mark_counter += 1
+                display_message(self.aid.localname,
+                                "Как называется горячее вино, прокипяченное с орехами и пряностями?")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'questions': ask}))
+                message.add_receiver(AID(name="person@localhost:8011"))
+                self.send(message)
+
+
+            elif ask == 6:
+                flag = content['flag']
+                message = ACLMessage()
+                if flag:
+                    self.mark_counter += 1
+                display_message(self.aid.localname, "Ваш результат '{}'".format(self.mark_counter))
+                if self.mark_counter == 5:
+                    display_message(self.aid.localname, "Поздравляю, вы выйграли")
+                    message.set_performative(ACLMessage.REJECT_PROPOSAL)
+                elif self.mark_counter == 3:
+                    display_message(self.aid.localname, "Неплохо, но можно и лучше")
+                    message.set_performative(ACLMessage.REJECT_PROPOSAL)
+
+                elif self.mark_counter < 3:
+                    display_message(self.aid.localname, "Вы проиграли")
+                    message.set_performative(ACLMessage.REJECT_PROPOSAL)
+
+
+
+
+class Person(Agent):
+    def __init__(self, aid):
+        super(Person, self).__init__(aid=aid, debug=False)
+        self.ready = ['Да', 'Нет']
+
+    def react(self, message):
+        super(Person, self).react(message)
+
+        if message.performative == ACLMessage.PROPOSE:
+            display_message(self.aid.localname, "Да, готов!")
+            message = ACLMessage()
+            message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+            message.set_content(json.dumps({'questions': 1}))
+            message.add_receiver(AID(name="leader@localhost:8022"))
+            self.send(message)
+        elif message.performative == ACLMessage.ACCEPT_PROPOSAL:
+            content = json.loads(message.content)
+            num = content['questions']
+
+            if num == 1:
+                rand_status = self.ready[random.randint(0, 1)]
+                message = ACLMessage()
+                num += 1
+                if rand_status == 'Да':
+                    display_message(self.aid.localname, "Из жира")
+                    message.set_content(json.dumps({'flag': True, 'questions': num}))
+                else:
+                    display_message(self.aid.localname, "пас")
+                    message.set_content(json.dumps({'flag': False, 'questions': num}))
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.add_receiver(AID(name="leader@localhost:8022"))
+                self.send(message)
+
+            elif num == 2:
+                rand_status = self.ready[random.randint(0, 1)]
+                message = ACLMessage()
+                num += 1
+                if rand_status == 'Да':
+                    display_message(self.aid.localname, "Оракулы")
+                    message.set_content(json.dumps({'flag': True, 'questions': num}))
+                else:
+                    display_message(self.aid.localname, "пас")
+                    message.set_content(json.dumps({'flag': False, 'questions': num}))
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.add_receiver(AID(name="leader@localhost:8022"))
+                self.send(message)
+
+            elif num == 3:
+                rand_status = self.ready[random.randint(0, 1)]
+                message = ACLMessage()
+                num += 1
+                if rand_status == 'Да':
+                    display_message(self.aid.localname, "В Италии")
+                    message.set_content(json.dumps({'flag': True, 'questions': num}))
+                else:
+                    display_message(self.aid.localname, "пас")
+                    message.set_content(json.dumps({'flag': False, 'questions': num}))
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.add_receiver(AID(name="leader@localhost:8022"))
+                self.send(message)
+
+            elif num == 4:
+                rand_status = self.ready[random.randint(0, 1)]
+                message = ACLMessage()
+                num += 1
+                if rand_status == 'Да':
+                    display_message(self.aid.localname, "Немецкий философ")
+                    message.set_content(json.dumps({'flag': True, 'questions': num}))
+                else:
+                    display_message(self.aid.localname, "пас")
+                    message.set_content(json.dumps({'flag': False, 'questions': num}))
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.add_receiver(AID(name="leader@localhost:8022"))
+                self.send(message)
+
+            elif num == 5:
+                rand_status = self.ready[random.randint(0, 1)]
+                message = ACLMessage()
+                num += 1
+                if rand_status == 'Да':
+                    display_message(self.aid.localname, "Глинтвейн")
+                    message.set_content(json.dumps({'flag': True, 'questions': num}))
+                else:
+                    display_message(self.aid.localname, "пас")
+                    message.set_content(json.dumps({'flag': False, 'questions': num}))
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.add_receiver(AID(name="leader@localhost:8022"))
+                self.send(message)
+
+
+
+
+
+
+from one import Person, Leader
+
+if __name__ == '__main__':
+    agents = list()
+    leader = Leader(AID(name="leader@localhost:8022"))
+    person = Person(AID(name="person@localhost:8011"))
+    agents.append(leader)
+    agents.append(person)
+    start_loop(agents)
+
+
+
+[leader] 24/12/2020 19:16:25.442 --> Здравствуйте, вы готовы?
+[person] 24/12/2020 19:16:25.449 --> Да, готов!
+[leader] 24/12/2020 19:16:25.457 --> Из чего состоит горб у верблюда?
+[person] 24/12/2020 19:16:25.460 --> пас
+[leader] 24/12/2020 19:16:25.463 --> Как назывались античные жрецы, предсказывавшие будущее?
+[person] 24/12/2020 19:16:25.465 --> Оракулы
+[leader] 24/12/2020 19:16:25.468 --> В какой стране уже более 600 лет никак не может упасть Пизанская башня?
+[person] 24/12/2020 19:16:25.471 --> В Италии
+[leader] 24/12/2020 19:16:25.473 --> Кто такой Иммануил Кант?
+[person] 24/12/2020 19:16:25.475 --> пас
+[leader] 24/12/2020 19:16:25.477 --> Как называется горячее вино, прокипяченное с орехами и пряностями?
+[person] 24/12/2020 19:16:25.491 --> Глинтвейн
+[leader] 24/12/2020 19:16:25.493 --> Ваш результат '3'
+[leader] 24/12/2020 19:16:25.493 --> Неплохо, но можно и лучше
+
+
+[leader] 24/12/2020 19:17:45.625 --> Здравствуйте, вы готовы?
+[person] 24/12/2020 19:17:45.632 --> Да, готов!
+[leader] 24/12/2020 19:17:45.641 --> Из чего состоит горб у верблюда?
+[person] 24/12/2020 19:17:45.651 --> Из жира
+[leader] 24/12/2020 19:17:45.663 --> Как назывались античные жрецы, предсказывавшие будущее?
+[person] 24/12/2020 19:17:45.666 --> Оракулы
+[leader] 24/12/2020 19:17:45.668 --> В какой стране уже более 600 лет никак не может упасть Пизанская башня?
+[person] 24/12/2020 19:17:45.680 --> В Италии
+[leader] 24/12/2020 19:17:45.682 --> Кто такой Иммануил Кант?
+[person] 24/12/2020 19:17:45.694 --> Немецкий философ
+[leader] 24/12/2020 19:17:45.706 --> Как называется горячее вино, прокипяченное с орехами и пряностями?
+[person] 24/12/2020 19:17:45.718 --> Глинтвейн
+[leader] 24/12/2020 19:17:45.721 --> Ваш результат '5'
+[leader] 24/12/2020 19:17:45.721 --> Поздравляю, вы выйграли
+
+
+[leader] 24/12/2020 19:18:30.629 --> Здравствуйте, вы готовы?
+[person] 24/12/2020 19:18:30.636 --> Да, готов!
+[leader] 24/12/2020 19:18:30.649 --> Из чего состоит горб у верблюда?
+[person] 24/12/2020 19:18:30.652 --> пас
+[leader] 24/12/2020 19:18:30.664 --> Как назывались античные жрецы, предсказывавшие будущее?
+[person] 24/12/2020 19:18:30.667 --> пас
+[leader] 24/12/2020 19:18:30.679 --> В какой стране уже более 600 лет никак не может упасть Пизанская башня?
+[person] 24/12/2020 19:18:30.691 --> В Италии
+[leader] 24/12/2020 19:18:30.704 --> Кто такой Иммануил Кант?
+[person] 24/12/2020 19:18:30.716 --> пас
+[leader] 24/12/2020 19:18:30.718 --> Как называется горячее вино, прокипяченное с орехами и пряностями?
+[person] 24/12/2020 19:18:30.730 --> пас
+[leader] 24/12/2020 19:18:30.732 --> Ваш результат '1'
+[leader] 24/12/2020 19:18:30.732 --> Вы проиграли
+
+
