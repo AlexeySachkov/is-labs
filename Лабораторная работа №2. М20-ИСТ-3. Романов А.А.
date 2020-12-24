@@ -1,0 +1,123 @@
+#Подбор пароля к сервису
+#Агент User - пользователь, подбирающий пароль к одному из сервисов. Подразумевается, что у него
+#есть список паролей к разным сервисам и он подбирает их случайным образом.
+#Агент Security - человек (или программа), который проверяет корректность пароля и сообщает
+#об ошибке пользователю.
+#User подбирает пароль -> если он не подходит, то Security сообщает об этом. Если пользователь
+#введет не подберет пароль за 4 попытки, то аккаунт блокируется (условно).
+
+import json
+from pade.acl.messages import ACLMessage
+from pade.misc.utility import display_message, start_loop
+from pade.core.agent import Agent
+from pade.acl.aid import AID
+from sys import argv
+import random
+
+Service = ["VKontakte","Mail.ru","Google.com","Yandex","Instagram","Spotify"]
+
+Password = [539815,538205,125252,643905,929146,335225]
+
+class User(Agent):
+    def __init__(self, aid):
+        super(User, self).__init__(aid=aid, debug=False)
+
+    def get_Service(self):
+        self.serviceID = random.randint(0,len(Service)-1)
+        self.chosenService = Service[self.serviceID]
+        display_message(self.aid.localname, Service)
+
+    def on_start(self):
+        super().on_start()
+        self.get_Service()
+        self.call_later(10, self.try_password)
+
+    def try_password(self):
+        self.passwordID = random.randint(0,len(Password)-1)
+        self.chosenPassword = Password[self.passwordID]
+        display_message(self.aid.localname, f"Is {self.chosenPassword} the password to {self.chosenService}?")
+        message = ACLMessage()
+        message.set_performative(ACLMessage.QUERY_REF)
+        message.set_content(json.dumps({'serviceID': self.serviceID,
+                                        'password': self.chosenPassword}))
+        message.add_receiver(AID(name="security@localhost:8022"))
+        self.send(message)
+
+    def react(self, message):
+        super(User, self).react(message)
+        answer = json.loads(message.content)
+        answerSTR = str(answer['Answer'])
+        if (message.performative == ACLMessage.PROPOSE and answerSTR == "Good"):
+            display_message(self.aid.localname, f"Thank you for your help.")
+            message = ACLMessage()
+            message.set_performative(ACLMessage.PROPOSE)
+            message.add_receiver(AID(name="security@localhost:8022"))
+            self.send(message)
+        elif (message.performative == ACLMessage.PROPOSE and answerSTR == "Bad"):
+            display_message(self.aid.localname, "Okey, i will try another one.")
+            self.try_password()
+
+
+class Security(Agent):
+    def __init__(self, aid):
+        super(Security, self).__init__(aid=aid, debug=False)
+
+    def on_start(self):
+        super().on_start()
+        self.countAttempts = 0
+
+    def CheckPassword(self):
+        if (self.password in Password) and (Password.index(self.password) == self.serviceID):
+            display_message(self.aid.localname, f"Yes, the password to {Service[self.serviceID]} is correct.")
+            message = ACLMessage()
+            message.set_performative(ACLMessage.PROPOSE)
+            message.set_content(json.dumps({'Answer': "Good"}))
+            message.add_receiver(AID(name="user@localhost:8011"))
+            self.send(message)
+        elif (self.password in Password) and (Password.index(self.password) != self.serviceID):
+            self.countAttempts+=1
+            display_message(self.aid.localname, f"No, the password to {Service[self.serviceID]} is incorrect.")
+            if (self.countAttempts < 4):
+                display_message(self.aid.localname, f"You have {4-self.countAttempts} attempts left!")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.PROPOSE)
+                message.set_content(json.dumps({'Answer': "Bad"}))
+                message.add_receiver(AID(name="user@localhost:8011"))
+                self.send(message)
+            else:
+                display_message(self.aid.localname, "You don't have any attempts anymore. The account is blocked.")
+    
+    def react(self, message):
+        super(Security, self).react(message)
+        if message.performative == ACLMessage.PROPOSE:
+            display_message(self.aid.localname, "Good for you.")
+        elif message.performative == ACLMessage.QUERY_REF:
+            content = json.loads(message.content)
+            self.serviceID = int(content['serviceID'])
+            self.password = int(content['password'])
+            self.CheckPassword()
+
+if __name__ == '__main__':
+    agents = list()
+    user = User(AID(name='user@localhost:8011'))
+    security = Security(AID(name='security@localhost:8022'))
+    agents.append(user)
+    agents.append(security)
+    start_loop(agents)
+    
+    
+    
+    
+##### Пример вывода
+#[user] 10/12/2020 17:37:43.163 —> Is 335225 the password to Yandex?
+#[security] 10/12/2020 17:37:43.165 —> No, the password to Yandex is incorrect.
+#[security] 10/12/2020 17:37:43.166 —> You have 3 attempts left!
+#[user] 10/12/2020 17:37:43.169 —> Okey, i will try another one.
+#[user] 10/12/2020 17:37:43.170 —> Is 539815 the password to Yandex?
+#[security] 10/12/2020 17:37:43.174 —> No, the password to Yandex is incorrect.
+#[security] 10/12/2020 17:37:43.174 —> You have 2 attempts left!
+#[user] 10/12/2020 17:37:43.177 —> Okey, i will try another one.
+#[user] 10/12/2020 17:37:43.178 —> Is 643905 the password to Yandex?
+#[security] 10/12/2020 17:37:43.181 —> Yes, the password to Yandex is correct.
+#[user] 10/12/2020 17:37:43.184 —> Thank you for your help.
+#[security] 10/12/2020 17:37:43.187 —> Good for you.
