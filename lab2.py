@@ -93,6 +93,7 @@ class Seller(Agent):
     def __init__(self, aid):
         super(Seller, self).__init__(aid=aid, debug=False)
         self.product_list = ['Tomat', 'Potatoes', 'Cucumber', 'Cabbage' , 'Onion']
+        self.products = ','.join(self.product_list)
         self.quantity = 0
         self.type = ''
 
@@ -146,7 +147,7 @@ class Seller(Agent):
         super(Seller, self).react(message)
 
         if message.performative == ACLMessage.PROPOSE:
-            display_message(self.aid.localname, "We have:Tomat,Potatoes,Cucumber,Cabbage,Onion")
+            display_message(self.aid.localname, "We have:{}".format(self.products))
             display_message(self.aid.localname, "What have you chosen?")
             message = ACLMessage()
             message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
@@ -218,3 +219,53 @@ if __name__ == '__main__':
 
 
     start_loop(agents) 
+#First	
+#[client] 30/12/2020 10:58:13.471 --> Hello!
+#[client] 30/12/2020 10:58:13.471 --> I want to buy vegetables
+#[client] 30/12/2020 10:58:13.471 --> What can you suggest?
+#[seller] 30/12/2020 10:58:13.487 --> We have:Tomat,Potatoes,Cucumber,Cabbage,Onion
+#[seller] 30/12/2020 10:58:13.487 --> What have you chosen?
+#[client] 30/12/2020 10:58:13.487 --> I want to buy Tomat
+#[client] 30/12/2020 10:58:13.487 --> in quantity 6
+#[client] 30/12/2020 10:58:13.502 --> Do you have that much?
+#[seller] 30/12/2020 10:58:13.502 --> Now, i have 15
+#[client] 30/12/2020 10:58:13.518 --> This option suits me
+#[client] 30/12/2020 10:58:13.518 --> Can you provide a discount at 10 %
+#[seller] 30/12/2020 10:58:13.518 --> Ok
+#[seller] 30/12/2020 10:58:13.518 --> Sales 6 kg
+#[seller] 30/12/2020 10:58:13.518 --> Amount without discount 564
+#[seller] 30/12/2020 10:58:13.518 --> Total amount  507.6
+
+#Second
+#[client] 30/12/2020 11:08:34.843 --> Hello!
+#[client] 30/12/2020 11:08:34.843 --> I want to buy vegetables
+#[client] 30/12/2020 11:08:34.843 --> What can you suggest?
+#[seller] 30/12/2020 11:08:34.859 --> We have:Tomat,Potatoes,Cucumber,Cabbage,Onion
+#[seller] 30/12/2020 11:08:34.859 --> What have you chosen?
+#[client] 30/12/2020 11:08:34.859 --> I want to buy Cabbage
+#[client] 30/12/2020 11:08:34.859 --> in quantity 18
+#[client] 30/12/2020 11:08:34.859 --> Do you have that much?
+#[seller] 30/12/2020 11:08:34.875 --> Now, i have 13
+#[client] 30/12/2020 11:08:34.890 --> I do not like it
+#[seller] 30/12/2020 11:08:34.890 --> Sorry I can't help you then
+#[client] 30/12/2020 11:08:34.890 --> Thank you,bye
+
+#Third
+#[client] 30/12/2020 11:14:00.844 --> Hello!
+#[client] 30/12/2020 11:14:00.844 --> I want to buy vegetables
+#[client] 30/12/2020 11:14:00.844 --> What can you suggest?
+#[seller] 30/12/2020 11:14:00.860 --> We have:Tomat,Potatoes,Cucumber,Cabbage,Onion
+#[seller] 30/12/2020 11:14:00.860 --> What have you chosen?
+#[client] 30/12/2020 11:14:00.860 --> I want to buy Tomat
+#[client] 30/12/2020 11:14:00.875 --> in quantity 6
+#[client] 30/12/2020 11:14:00.875 --> Do you have that much?
+#[seller] 30/12/2020 11:14:00.875 --> Now, i have 15
+#[client] 30/12/2020 11:14:00.875 --> This option suits me
+#[client] 30/12/2020 11:14:00.875 --> Can you provide a discount at 11 %
+#[seller] 30/12/2020 11:14:00.891 --> Sorry I can't help you then
+#[client] 30/12/2020 11:14:00.891 --> Ok
+#[client] 30/12/2020 11:14:00.891 --> Can you provide a discount at 5.5 %
+#[seller] 30/12/2020 11:14:00.891 --> Ok
+#[seller] 30/12/2020 11:14:00.891 --> Sales 6 kg
+#[seller] 30/12/2020 11:14:00.891 --> Amount without discount 252
+#[seller] 30/12/2020 11:14:00.891 --> Total amount  238.14
