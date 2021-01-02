@@ -1,0 +1,47 @@
+Case 1:
+[buyer] 25/12/2020 01:49:40.589 --> Here is Buyer. He has 1890633 to buy land and 1389653 to buy car
+[buyer] 25/12/2020 01:49:50.605 --> Going to meet land owner
+[buyer] 25/12/2020 01:49:50.605 --> I need to buy the house. What is the price?
+[land_owner] 25/12/2020 01:49:50.610 --> It costs 1500000
+[buyer] 25/12/2020 01:49:50.616 --> I have only 1890633
+[land_owner] 25/12/2020 01:49:50.622 --> We are going to sell it to you
+[buyer] 25/12/2020 01:49:50.627 --> I'll take it!
+[buyer] 25/12/2020 01:49:50.628 --> Going to meet car saler...
+[buyer] 25/12/2020 01:49:50.629 --> I need to buy the car. What is the price?
+[car_saler] 25/12/2020 01:49:50.640 --> It costs 1200000
+[buyer] 25/12/2020 01:49:50.646 --> I have only 1389653
+[car_saler] 25/12/2020 01:49:50.652 --> We are going to sell it to you
+[buyer] 25/12/2020 01:49:50.658 --> I'll take it!
+[car_saler] 25/12/2020 01:49:50.663 --> It is good deal
+
+Case 2:
+[buyer] 25/12/2020 01:55:48.856 --> Here is Buyer. He has 1846497 to buy land and 1163330 to buy car
+[buyer] 25/12/2020 01:55:58.874 --> Going to meet land owner
+[buyer] 25/12/2020 01:55:58.874 --> I need to buy the house. What is the price?
+[land_owner] 25/12/2020 01:55:58.879 --> It costs 1500000
+[buyer] 25/12/2020 01:55:58.883 --> I have only 1846497
+[land_owner] 25/12/2020 01:55:58.887 --> We are going to sell it to you
+[buyer] 25/12/2020 01:55:58.892 --> I'll take it!
+[buyer] 25/12/2020 01:55:58.892 --> Going to meet car saler...
+[buyer] 25/12/2020 01:55:58.893 --> I need to buy the car. What is the price?
+[car_saler] 25/12/2020 01:55:58.901 --> It costs 1200000
+[buyer] 25/12/2020 01:55:58.906 --> I have only 1163330
+[car_saler] 25/12/2020 01:55:58.911 --> You dont have enough money
+[buyer] 25/12/2020 01:55:58.916 --> Sorry for distracting you :(
+[car_saler] 25/12/2020 01:55:58.921 --> It's ok, dont worry
+
+Case 3:
+[buyer] 25/12/2020 02:01:03.233 --> Here is Buyer. He has 1170188 to buy land and 1196981 to buy car
+[buyer] 25/12/2020 02:01:13.249 --> Going to meet land owner
+[buyer] 25/12/2020 02:01:13.249 --> I need to buy the house. What is the price?
+[land_owner] 25/12/2020 02:01:13.254 --> It costs 1500000
+[buyer] 25/12/2020 02:01:13.258 --> I have only 1170188
+[land_owner] 25/12/2020 02:01:13.264 --> You dont have enough money
+[buyer] 25/12/2020 02:01:13.269 --> Sorry for distracting you :(
+[buyer] 25/12/2020 02:01:13.270 --> Going to meet car saler...
+[buyer] 25/12/2020 02:01:13.270 --> I need to buy the car. What is the price?
+[car_saler] 25/12/2020 02:01:13.279 --> It costs 1200000
+[buyer] 25/12/2020 02:01:13.285 --> I have only 1196981
+[car_saler] 25/12/2020 02:01:13.289 --> You dont have enough money
+[buyer] 25/12/2020 02:01:13.294 --> Sorry for distracting you :(
+[car_saler] 25/12/2020 02:01:13.298 --> It's ok, dont worry
