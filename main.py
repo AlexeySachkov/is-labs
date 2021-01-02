@@ -76,3 +76,4 @@ def showDataOnMesh (nClasses, nItemsInClass, k):
                c=[trainData[i][1] for i in range(len(trainData))],
                cmap=classColormap)
     pl.show()
+ showDataOnMesh (3, 40, 3) 
