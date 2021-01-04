@@ -190,3 +190,21 @@ if __name__ == '__main__':
 
 
     start_loop(agents)
+
+
+#[ams@localhost:8000] 09/12/2020 19:35:01.424 --> Agent employer@localhost:8022 successfully identified.
+#[client@localhost:8011] 09/12/2020 19:35:01.426 --> Indentification process done.
+#[employer@localhost:8022] 09/12/2020 19:35:01.426 --> Indentification process done.
+#[client] 09/12/2020 19:35:11.425 --> Hi, I've heard you're looking for developers!
+#[employer] 09/12/2020 19:35:11.430 --> Hello, we currently have a vacancy for a PHPC++Java
+#[employer] 09/12/2020 19:35:11.430 --> Which of these do you use?
+#[client] 09/12/2020 19:35:11.432 --> Sure, I've been worked with it!
+#[client] 09/12/2020 19:35:11.432 --> For a 2 years...
+#[employer] 09/12/2020 19:35:11.433 --> Good, what about frameworks, do you know .NET, Spring?
+#[client] 09/12/2020 19:35:11.435 --> I'm familiar with it too *_*
+#[employer] 09/12/2020 19:35:11.436 --> Spring
+#[employer] 09/12/2020 19:35:11.436 --> Good! Very good!
+#[employer] 09/12/2020 19:35:11.436 --> We can offer you salary 14905.80000000001
+#[client] 09/12/2020 19:35:11.437 --> Sorry, but I need 72680...
+#[employer] 09/12/2020 19:35:11.439 --> Good bye!
+#[client] 09/12/2020 19:35:11.440 --> See you!
