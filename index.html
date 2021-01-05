@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Handwritten Digit Classifier</title>
+    <meta charset="utf8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.5/math.js"></script>
+  </head>
+  <body>
+    <div class="instructions">
+      <p>Draw a number or letter in the area below and the computer will try to read it.</p>
+    </div>
+    <div class="interaction">
+      <canvas class="inputCanvas" width="224" height="224" style="background-color: #000000;"></canvas>
+      <canvas class="scaledInput" width="28" height="28" style="background-color: #000000;"></canvas>
+      <lable class="outputLabel" style="font-size: x-large;">-</lable>
+    </div>
+    <div>
+      <button class="clearButton">Clear</button>
+      <button class="predictButton">Predict</button>
+    </div>
+    <script src="weights.js"></script>
+    <script src="neuralnet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
