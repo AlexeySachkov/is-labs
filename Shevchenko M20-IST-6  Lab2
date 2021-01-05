@@ -1,0 +1,158 @@
+У ученика есть около 12 задач, которые имеют разный уровень сложности от 1 до 12. 
+У него есть 20 попыток на решение их всех, на одну задачу выдается около 20 минут. 
+На решение этих задач выдается 5 часов. И если задача не была решена с первого раза, то дополнительно на нее выдается такое же количество времени. 
+В итоге экзамена будет выведен процент и подведен итог - на сколько процентов сдан экзамен
+
+import json
+import random
+from pade.core.agent import Agent
+from pade.acl.messages import ACLMessage
+from pade.misc.utility import display_message, start_loop
+from pade.acl.aid import AID
+from sys import argv
+
+
+class Student(Agent):
+    def __init__(self, aid, receiver_aid):
+        super(Student, self).__init__(aid=aid, debug=False)
+        self.attempts = 20
+        self.composure = random.randint(4, 12)
+        display_message(self.aid.localname, f"В этом билете я получил = {self.composure} заданий и полностью готов к их решению")
+
+        self.receiverAID = receiver_aid
+
+
+    def react(self, message):
+        super(Student, self).react(message)
+        if message.performative == ACLMessage.PROPOSE:
+            content = json.loads(message.content)
+            task_difficulty = int(content['taskDif'])
+            display_message(self.aid.localname, f"Сложность задач {task_difficulty}")
+
+            if self.attempts == 0:
+                display_message(self.aid.localname, "Я не смог осилить все задачи")
+                self.send_message(0)
+            else:
+                rate = int(random.randint(self.composure, 8))
+                self.attempts = self.attempts - 1
+                self.send_message(rate)
+
+    def send_message(self, rate):
+        message = ACLMessage()
+        message.set_performative(ACLMessage.PROPOSE)
+        message.set_content(json.dumps({'rate': rate}))
+        message.add_receiver(self.receiverAID)
+        display_message(self.aid.localname,f"Try: {rate}")
+        self.send(message)
+
+
+
+class Teacher(Agent):
+    def __init__(self, aid, receiver_aid):
+        super(Teacher, self).__init__(aid=aid, debug=False)
+        self.receiverAID = receiver_aid
+
+    def on_start(self):
+        super().on_start()
+        display_message(self.aid.localname,
+        "Вам были заданы задания. "
+        "Вы быстро с ними справитесь! "
+        )
+        self.init_tasks()
+        self.call_later(8, self.send_task)
+
+
+    def init_tasks(self):
+        self.tasks = []
+        self.percent_to_complete = random.randint(10, 100)/100
+        display_message(self.aid.localname, f"Ученик завершил решение заданий и смог получить {self.percent_to_complete*100} баллов")
+
+        self.current_tusk_number = 0
+        self.sum_tasks_difficulty = 0
+        self.sum_sot = 0
+        for i in range(8):
+            difficulty = random.randint(1, 12)
+            self.tasks.append(difficulty)
+            self.sum_tasks_difficulty += difficulty
+
+    def send_task(self):
+        message = ACLMessage()
+        message.set_performative(ACLMessage.PROPOSE)
+        taskDif = int(self.tasks[self.current_tusk_number])
+        message.set_content(json.dumps({'taskDif': taskDif}))
+        message.add_receiver(self.receiverAID)
+        self.send(message)
+
+    def react(self, message):
+        super(Teacher, self).react(message)
+        if message.performative == ACLMessage.PROPOSE:
+            content = json.loads(message.content)
+            rate = int(content['rate'])
+
+            if rate == 0:
+                self.calc_result()
+                return
+            elif rate >= self.tasks[self.current_tusk_number]:
+                self.sum_sot = self.sum_sot + self.tasks[self.current_tusk_number]
+                self.current_tusk_number = self.current_tusk_number + 1
+                if self.current_tusk_number == 8:
+                    self.calc_result()
+                    return
+                else:
+                    display_message(self.aid.localname,
+                        "Прекрасная работа"
+                        "Ваша следующая задача"
+                    )
+            else:
+                display_message(self.aid.localname,
+                    "Попробуйте подумать еще немного. У вас есть еще время для решения этого задания"
+                )
+            self.send_task()
+
+    def calc_result(self):
+        sum = "{:.0f}".format(self.sum_tasks_difficulty*self.percent_to_complete)
+        if self.sum_sot >= (self.sum_tasks_difficulty*self.percent_to_complete):
+            display_message(self.aid.localname, f"{self.sum_sot} >= {sum}")
+            display_message(self.aid.localname,
+                "Хорошая работа! "
+            )
+        else:
+            display_message(self.aid.localname, f"{self.sum_sot} < {sum}")
+            display_message(self.aid.localname,
+                "Это плохо выполненная работа"
+                "Извините, но вы провалили экзамен"
+            )
+
+
+
+if __name__ == '__main__':
+
+    agents = list()
+
+    studentName = "Anduin"
+    teacherName = "Varian Rin"
+
+    student = Student(AID(name=studentName), receiver_aid=AID(name=studentName))
+    teacher = Teacher(AID(name=teacherName), receiver_aid=AID(name=teacherName))
+
+    agents.append(student)
+    agents.append(teacher)
+
+    start_loop(agents)
+	
+	
+	
+	
+	
+	
+[Anduin] 05/01/2021 23:02:47.818 -->  В этом билете я получил = 3 заданий и полностью готов к их решению
+[Varian Rin] 05/01/2021 23:02:47.829 --> Вам были заданы задания. Вы быстро с ними справитесь! 
+[Varian Rin] 05/01/2021 23:02:47.829 --> Ученик завершил решение заданий и смог получить 93.0 баллов
+
+
+
+[Anduin] 05/01/2021 23:04:35.707 -->  В этом билете я получил = 5 заданий и полностью готов к их решению
+[Varian Rin] 05/01/2021 23:04:35.719 --> Вам были заданы задания. Вы быстро с ними справитесь! 
+[Varian Rin] 05/01/2021 23:04:35.719 --> Ученик завершил решение заданий и смог получить 37.99999999999999 баллов
+[Varian Rin] 05/01/2021 23:04:35.719 --> Это плохо выполненная работа
+[Varian Rin] 05/01/2021 23:04:35.719 --> Извините, но вы провалили экзамен
