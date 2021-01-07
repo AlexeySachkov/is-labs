@@ -14,17 +14,20 @@
     Человек хочет самую сложную (по усталости) задачу (Complex)
     Человек берется за самую сложную и долговыполнимую задачу . Расщитывается по time*hard (ComplexLong)
 '''
-#pade start-runtime --port 8000 house.py
+#pade start-runtime --port 8000 house.py --username 1 --password 1
 #Python 3.8.5
 
 ''' 
 Сделано
     Генерация людей.
     Обмен сообщениями между людьми и отцом. Предварительное удаление у человека энергии
+    Добавлено первоначальное описание людей.
+    Каждое обращение человека сопровождается списком свободных задач
+частично сделано
+    Распределение задач
+    Продумано ACCEPT и reject. *особено reject*
 Нужно
     Генерация задач
-    Распределение задач
-    Продумать ACCEPT и reject. *особено reject*
 '''
 
 
@@ -47,9 +50,15 @@ class Houseworker(Agent):
         #print(aid.name,'\t',self.sex,self.age,self.timeToWork,self.energy,self.preferences, sep='\t')
     def on_start(self):
         super().on_start()
-        self.call_later(10, self.send_proposal)
+        display_message(
+            self.aid.localname, f'''
+            Я {self.sex}, мне {self.age} лет,
+            моя энергия {self.energy},
+            времени для работы {self.timeToWork},
+            предпочтение {self.preferences}'''
+            )
+        self.call_later(randrange(10,25), self.send_proposal)
     def send_proposal(self):
-        #display_message(self.aid.localname, "!!!!!!!!!!!!!!!!!!!")
         message = ACLMessage()
         message.set_performative(ACLMessage.PROPOSE)
         message.add_receiver(AID(name="Employer@localhost:8011"))
@@ -62,8 +71,6 @@ class Houseworker(Agent):
             }
         info_dump = pickle.dumps(info,0)
         message.set_content(info_dump)
-        
-        #print(message)
         self.send(message)
 
 
@@ -71,19 +78,38 @@ class Houseworker(Agent):
         super(Houseworker, self).react(message)
         # Продумать логику ACCEPT_PROPOSAL и reject
         if message.performative == ACLMessage.ACCEPT_PROPOSAL:
-            display_message(self.aid.localname,self.energy)
-            self.energy -=message.content
-            display_message(self.aid.localname,self.energy)
-            display_message(self.aid.localname,"GOOD")
-            pass
+            #display_message(self.aid.localname,self.energy)
+            info = pickle.loads(message.content)
+            name = info['name']            
+            time = info['timeToWork']
+            energy = info['energy']
+            self.energy -= energy
+            self.timeToWork -= time
+            #display_message(self.aid.localname,self.energy)
+            #выполнил(А)
+            display_message(self.aid.localname,
+                f'''
+                Я выполнил {name}. 
+                У меня осталось {self.energy} энергии.
+                У меня осталось {self.timeToWork} времени для работы''')
+            self.call_later(randrange(10,int(time/20)+10), self.send_proposal)
+        if message.performative == ACLMessage.REJECT_PROPOSAL:
+            display_message(self.aid.localname,"Подходящей работы нет")
+
+        if message.performative == ACLMessage.INFORM:
+            if message.content == 0:
+                display_message(self.aid.localname,"Задач больше нет ")
+            
 
 class Employer(Agent):
     def __init__(self, aid):
-        super(Employer, self).__init__(aid=aid, debug=False)
-        tasks = self.tasksToDo()
+        super(Employer, self).__init__(aid=aid, debug=False)     
 
     def tasksToDo(self):
-        pass
+        tasks = []
+        for i in range(randrange(2,10)):
+            tasks.append([f'task{i}','any', 0, randrange(60 , 60*3, 5), randrange(110, 350, 10), randrange(1,3)])                
+        return tasks
         # Генерируем список задач по дому
         # example task - name, sex, age, energy, time, count
         # Все параметры рандом
@@ -97,13 +123,33 @@ class Employer(Agent):
                            
     def on_start(self):
         super().on_start()
-        
-        display_message(self.aid.localname,
-            "Ну, граждане алкоголики, хулиганы, тунеядцы, кто хочет сегодня поработать?"
-            )
-    def selectionTask(self, tasks, sex, age, preferences):
-        pass
+        self.tasks = self.tasksToDo()
+        display_message(self.aid.localname,'Ну, граждане алкоголики, хулиганы, тунеядцы, кто хочет сегодня поработать?')
+
+    def selectionTask(self, sex, age, energy, time, preferences):
+        numberOfTasks = len(self.tasks)
+        if numberOfTasks == 0:
+            return 0, self.tasks
+        for taskNum in range(numberOfTasks):
+            task = self.tasks[taskNum]
+            nameTask = task[0]
+            sexTask = task[1]
+            ageTask = task[2]
+            energyTask = task[3]
+            timeTask = task[4]
+            countTask = task[5]
+            if energy >= energyTask and time >= timeTask:
+                #add check sex
+                #add check age                         
+                self.tasks[taskNum][5]-=1
+                if self.tasks[taskNum][5] == 0:
+                    self.tasks.remove(task)
+                return [nameTask,energyTask,timeTask], self.tasks
+            else:
+                continue
+        return 0, self.tasks
         # Идем по всем такскам и проверям на требования. (sex,age)
+        # Проверяем есть ли требуемая энергия и требуемое время для выполнения задачи.
         # Если подходит то,
         #   Смотрим на preferences 
         #       'Any' = берем первую подходящую,
@@ -116,29 +162,49 @@ class Employer(Agent):
     def react(self, message):
         super(Employer, self).react(message)
         if message.performative == ACLMessage.PROPOSE:
-
-            display_message(self.aid.localname, pickle.loads(message.content))
+            #display_message(self.aid.localname, pickle.loads(message.content))
             #display_message(self.aid.localname, pickle.loads(message.content)['age'])
             #display_message(self.aid.localname, message)
-            fromname = message.sender.name
-            display_message(self.aid.localname, fromname)
+            fromName = message.sender.name
+            specifications = pickle.loads(message.content)
+            sex = specifications['sex']
+            age = specifications['age']
+            timeToWork = specifications['timeToWork']
+            energy = specifications['energy']
+            preferences = specifications['preferences']
+            #display_message(self.aid.localname, fromName)
+            if self.tasks:
+                display_message(self.aid.localname,f''' 
+    Ответ для {message.sender.name} energy = {energy}, time = {timeToWork}
+    Доступные задачи: 
+    [name, sex, age, energy, time, count]''')
+                for task in self.tasks:
+                    print(task)
             message = ACLMessage()#reply = message.create_reply()
-            # task, self.tasks =  selectionTask(arguments)
-            # task !=0, то ACCEPT_PROPOSAL, иначе reject
-            message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
-            message.add_receiver(fromname)
+            if self.tasks:
+                task, self.tasks =  self.selectionTask(sex, age, energy, timeToWork, preferences)
+                if task != 0:
+                    message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                    info = {
+                        'name': task[0],
+                        'energy': task[1],
+                        'timeToWork': task[2],
+                        
+                    }
+                    info_tasks = pickle.dumps(info, 0)
+                    message.set_content(info_tasks)
+
+                else:
+                    message.set_performative(ACLMessage.REJECT_PROPOSAL)
+            else:
+                message.set_content(len(self.tasks))
+                message.set_performative(ACLMessage.INFORM)
+            message.add_receiver(fromName)
             # заглушка. Проверка уменьшении энергии у человека.
-            # Будем выставлять 2 параметра: [energy, time]. Через dumps
-            message.set_content(randrange(1, 60)) 
+            # Будем выставлять 2 параметра: [energy, time]. Через dumps            
             self.send(message)
 
-            
-            
-
-
-
 if __name__ == '__main__':
-
     agents = []
     
     with open('mansname.txt',encoding="utf-8") as f:
@@ -146,7 +212,7 @@ if __name__ == '__main__':
     with open('womennames.txt',encoding="utf-8") as f:
         womens = f.readlines()
     quantity = randrange(2, len(mans)) + randrange(2, len(womens))
-
+    quantity = 5
     ids = set()
     while len(ids)!=quantity:
         ids.add(str(randrange(100, 1000)))
@@ -187,9 +253,9 @@ if __name__ == '__main__':
             age=525,
             timeToWork=3415,
             energy=6425
-        )) '''    
+        )) ''' 
     employerName = "Employer@localhost:8011"    
-    employer = Employer(AID(name=employerName))    
+    employer = Employer(AID(name=employerName))       
     agents.append(employer)
 
     start_loop(agents)
