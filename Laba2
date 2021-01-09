@@ -1,0 +1,164 @@
+# Программа работы с заказами на аренду коттеджей на базе отдыха(на месяц). Есть 6 варианта коттеджей, различающихся вместимостью.
+# Для аренды коттеджей необходимо узнать дату и нужна ли беседка рядом с домом.
+# Пример работы представлен после кода
+import json
+
+
+from pade.acl.messages import ACLMessage
+from pade.misc.utility import display_message, start_loop
+from pade.core.agent import Agent
+from pade.acl.aid import AID
+
+import random
+
+type_slide = ['1-4', '5-6', '7-10']
+
+
+class Administrator(Agent):
+def __init__(self, aid):
+super(Administrator, self).__init__(aid=aid, debug=False)
+
+def react(self, message):
+super(Administrator, self).react(message)
+if message.performative == ACLMessage.PROPOSE:
+content = json.loads(message.content)
+dateClient = int(content['dateClient'])
+besedkaClient = bool(content['besedkaClient'])
+typeSlide = int(content['typeSlide'])
+message = ACLMessage()
+
+if typeSlide == 0:
+if dateClient != 12 and dateClient != 18:
+message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname, "Коттеджи такой вместимости, к сожалению заняты на эти даты. Можем предложить вам рассмотреть дом побольше.")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+if besedkaClient == True and dateClient == 18:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname, "К сожалению, дом с беседкой занят. Попробуйте рассмотреть вариант без беседки")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname, "Необходимый вам дом свободен. Бронируем?")
+message.set_content(json.dumps({'ClientPos': 1}))
+self.send(message)
+
+if typeSlide == 1:
+if dateClient != 8 and dateClient != 15:
+message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname,
+"Коттеджи такой вместимости, к сожалению заняты на эти даты. Можем предложить вам рассмотреть дом побольше.")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+if besedkaClient == True and dateClient == 8:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname,
+"К сожалению, дом с беседкой занят. Попробуйте рассмотреть вариант без беседки")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname, "Необходимый вам дом свободен. Бронируем?")
+message.set_content(json.dumps({'ClientPos': 1}))
+self.send(message)
+if typeSlide == 2:
+if dateClient != 10:
+message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname,
+"Коттеджи такой вместимости, к сожалению заняты на эти даты. Можем предложить вам рассмотреть другие даты.")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+if besedkaClient == True and dateClient == 7:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname,
+"К сожалению, дом с беседкой занят. Попробуйте рассмотреть вариант без беседки")
+message.set_content(json.dumps({'ClientPos': 0}))
+self.send(message)
+else:
+message.set_performative(ACLMessage.REJECT_PROPOSAL)
+message.add_receiver(AID(name="Client@localhost:8011"))
+display_message(self.aid.localname, "Необходимый вам дом свободен. Бронируем?")
+message.set_content(json.dumps({'ClientPos': 1}))
+self.send(message)
+
+
+class Client(Agent):
+def __init__(self, aid):
+ 
+super(Client, self).__init__(aid=aid, debug=False)
+self.dateClient = 1
+
+def on_start(self):
+super().on_start()
+self.call_later(10, self.sendValue)
+
+def sendValue(self):
+self.dateClient = random.randint(1, 31)
+self.random_number = random.randint(0, 2)
+
+
+self.besedkaClient = random.choice([True, False])
+random_type = type_slide[self.random_number]
+display_message(self.aid.localname, "Нам нужен дом, рассчитанный на {} человек".format(random_type))
+display_message(self.aid.localname, "Необходимая дата: {} ".format(self.dateClient))
+display_message(self.aid.localname, "Нужна ли нам беседка? {} ".format(self.besedkaClient))
+message = ACLMessage()
+message.set_performative(ACLMessage.PROPOSE)
+message.set_content(json.dumps({'dateClient': self.dateClient, 'besedkaClient': self.besedkaClient, 'typeSlide': self.random_number}))
+message.add_receiver(AID(name="Administrator@localhost:8022"))
+
+self.send(message)
+
+
+def react(self, message):
+super(Client, self).react(message)
+content = json.loads(message.content)
+ClientPos = int(content['ClientPos'])
+if message.performative == ACLMessage.REJECT_PROPOSAL:
+if ClientPos == 0:
+display_message(self.aid.localname, "{Хорошо, тогда мы еще подумаем")
+self.send(message)
+pass
+elif message.performative == ACLMessage.ACCEPT_PROPOSAL:
+if ClientPos == 1:
+display_message(self.aid.localname, "Спасибо, нам все подходит. Бронируем")
+self.send(message)
+
+if __name__ == '__main__':
+agents = list()
+
+
+administrator = Administrator(AID(name="Administrator@localhost:8022"))
+client = Client(AID(name="Client@localhost:8011"))
+
+
+agents.append(administrator)
+agents.append(client)
+
+start_loop(agents)
+
+
+#Результат работы
+[Client] 08/01/2021 16:26:45.974 —> Нам нужен дом, рассчитанный на 5-6 человек
+[Client] 08/01/2021 16:26:45.978 —> Необходимая дата: 8
+[Client] 08/01/2021 16:26:45.981 —> Нужна ли нам беседка? True
+[Administrator] 08/01/2021 16:26:45.991 —> Необходимый вам дом свободен. Бронируем?
+[Client] 08/01/2021 16:26:45.995 —> Спасибо, нам все подходит. Бронируем
+ 
+[Client] 08/01/2021 16:29:47.639 —> Нам нужен дом, рассчитанный на 5-6 человек
+[Client] 08/01/2021 16:29:47.642 —> Необходимая дата: 24
+[Client] 08/01/2021 16:29:47.645 —> Нужна ли нам беседка? True
+[Administrator] 08/01/2021 16:29:47.654 —> Необходимый вам дом свободен. Бронируем?
+[Client] 08/01/2021 16:29:47.657 —> Спасибо, нам все подходит. Бронируем
