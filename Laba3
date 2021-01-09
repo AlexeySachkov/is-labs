@@ -1,0 +1,22 @@
+import cv2
+
+img = cv2.imread("img1.jpg")
+gray = cv2.cvtColor (img, cv2.COLOR_BGR2GRAY)
+image = cv2.medianBlur(gray, 3)
+
+face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+face = face_cascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
+for x,y,w,h in face:
+cv2.rectangle(image, (x,y), (x+w, y+h), (255,0,0), 2)
+
+smile_cascade = cv2.CascadeClassifier("haarcascade_smile.xml")
+smile = smile_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=10, minSize=(7, 7))
+for x,y,w,h in smile:
+cv2.rectangle(image, (x,y), (x+w, y+h), (0,0,255), 2)
+
+
+print("Found", len(face))
+cv2.imshow("Face", image)
+
+cv2.waitKey (0)
+cv2.destroyAllWindows()
