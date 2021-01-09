@@ -1,0 +1,38 @@
+#Дано: Семейное древо Романовых.
+#Здачи:
+#Определить количество детей.
+#Определеить семейное родство- брат/сестра и т.д.
+
+grangrandparentmale(petr1).
+male(aleksey).
+male(petr2).
+male(nikolay2).
+male(petr3).
+male(pavel1).
+
+female(anna).
+female(elizaveta).
+
+parent(aleksey, petr1).
+parent(aleksey, anna).
+parent(petr2, anna).
+parent(nikolay2, anna).
+parent(petr3, anna).
+parent(pavel, anna).
+parent(elizaveta, petr1).
+parent(anna, petr1).
+mother(M,X) :- female(M), parent(X,M).
+father(F,X) :- male(F), parent(X, F).
+sibling(X,Y) :- parent(X, N), parent(Y, N).
+sister(X,Y) :- female(X), parent(X,N), parent(Y,N).
+brother(X,Y) :- male(X),parent(X,N), parent(Y,N).
+aunt(X,Y) :- female(X), parent(Y,N), sister(X,N).
+uncle(X,Y) :- male(X), parent(Y,N), brother(X,N).
+grandparent(G,Y) :- parent(Y,N),parent(N,G).
+count_children(Parent, N) :-
+    count_children(Parent, [], 0, N).
+
+count_children(Parent, L, N0, N) :-
+    (parent(C, Parent), \+member(C, L))
+    -> (N1 is N0+1, count_children(Parent, [C|L], N1, N))
+    ; N = N0.
