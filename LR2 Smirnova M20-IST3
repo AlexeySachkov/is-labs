@@ -1,0 +1,189 @@
+Задача:
+Кондитерская 
+Торты имеют минимальную цену (себестоимость) и максимальную (в продаже). Цена задается рандомно.
+Приходит покупатель и говорит, какой торт он хочет. Если хватает денег – покупает. Если нет – пекарня делает скидку 10%. Если цена со скидкой не больше денег у покупателя, то продажа. Если больше, то до свидания.
+
+import json
+import random
+from pade.acl.messages import ACLMessage
+from pade.misc.utility import display_message, start_loop
+from pade.core.agent import Agent
+from pade.acl.aid import AID
+
+class Customer(Agent):
+    def __init__(self, aid):
+        super(Customer, self).__init__(aid=aid, debug=False)
+        self.price = int(random.randint(500, 2000))
+        self.type_cake = ['Медовик', 'Микадо', 'Прага', 'Киевский']
+
+    def react(self, message):
+        super(Customer, self).react(message)
+        if message.performative == ACLMessage.PROPOSE:
+                random_number = int(random.randint(0, 3))
+                random_type = self.type_cake[random_number]
+                display_message(self.aid.localname, "Здравствуйте!")
+                display_message(self.aid.localname, "У вас есть торт {} ?".format(random_type))
+                message = ACLMessage()
+                message.set_performative(ACLMessage.PROPOSE)
+                message.add_receiver(AID(name="agent_seller@localhost:8022"))
+                self.send(message)
+        elif message.performative == ACLMessage.ACCEPT_PROPOSAL:
+                content = json.loads(message.content)
+                flag = content['flag']
+                if not flag:
+                    random_number = int(random.randint(0, 3))
+                    random_type = self.type_cake[random_number]
+                    display_message(self.aid.localname, "Хватит ли мне {} руб?".format(self.price))
+                    message = ACLMessage()
+                    message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                    message.set_content(json.dumps({'type': random_type, 'price': 0}))
+                    message.add_receiver(AID(name="agent_seller@localhost:8022"))
+                    self.send(message)
+                else:
+                    price = content['price']
+                    mood = content['mood']
+                    if self.price >= price:
+                        display_message(self.aid.localname, "Замечательно!")
+                        message = ACLMessage()
+                        message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                        message.set_content(json.dumps({'price': price}))
+                        message.add_receiver(AID(name="agent_seller@localhost:8022"))
+                        self.send(message)
+                    elif mood:
+                        display_message(self.aid.localname, "Слишком дорого")
+                        message = ACLMessage()
+                        message.set_performative(ACLMessage.REJECT_PROPOSAL)
+                        message.set_content(json.dumps({'price': price, 'mood': True}))
+                        message.add_receiver(AID(name="agent_seller@localhost:8022"))
+                        self.send(message)
+                    else:
+                        display_message(self.aid.localname, "Слишком дорого")
+                        message = ACLMessage()
+                        message.set_performative(ACLMessage.REJECT_PROPOSAL)
+                        message.set_content(json.dumps({'price': price, 'mood': False}))
+                        message.add_receiver(AID(name="agent_seller@localhost:8022"))
+                        self.send(message)
+        elif message.performative == ACLMessage.REJECT_PROPOSAL:
+            display_message(self.aid.localname, "Спасибо, до свидания")
+
+class Seller(Agent):
+    def __init__(self, aid):
+        super(Seller, self).__init__(aid=aid, debug=False)
+        self.type_cake = ['Медовик', 'Микадо', 'Прага', 'Киевский']
+        self.type = ''
+
+    def calculate_price(self):
+        if self.type == "Медовик":
+            return int(random.randint(500, 600))
+        elif self.type == "Прага":
+            return int(random.randint(700, 800))
+        elif self.type == "Киевский":
+            return int(random.randint(1000, 1200))
+        elif self.type == "Микадо":
+            return int(random.randint(1300, 1600))
+
+    def max_price(self):
+        if self.type == "Медовик":
+            return 600
+        elif self.type == "Прага":
+            return 800
+        elif self.type == "Киевский":
+            return 1200
+        elif self.type == "Микадо":
+            return 1600
+
+    def on_start(self):
+        super().on_start()
+        self.call_later(10, self.send_proposal)
+
+    def send_proposal(self):
+        display_message(self.aid.localname, "Здравствуйте!")
+        message = ACLMessage()
+        message.set_performative(ACLMessage.PROPOSE)
+        message.add_receiver(AID(name="agent_customer@localhost:8011"))
+        self.send(message)
+
+    def react(self, message):
+        super(Seller, self).react(message)
+
+        if message.performative == ACLMessage.PROPOSE:
+            display_message(self.aid.localname, "Да")
+            message = ACLMessage()
+            message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+            message.set_content(json.dumps({'flag': False}))
+            message.add_receiver(AID(name="agent_customer@localhost:8011"))
+            self.send(message)
+        elif message.performative == ACLMessage.ACCEPT_PROPOSAL:
+            content = json.loads(message.content)
+            price = content['price']
+            if price == 0:
+                self.type = content['type']
+                price = self.max_price()
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                display_message(self.aid.localname, "Он стоит {} руб.".format(price))
+                message.set_content(json.dumps({'flag': True, 'price': price, 'mood': True}))
+                message.add_receiver(AID(name="agent_customer@localhost:8011"))
+                self.send(message)
+            else:
+                display_message(self.aid.localname, "Ваш торт, приятного аппетита!")
+
+        elif message.performative == ACLMessage.REJECT_PROPOSAL:
+            content = json.loads(message.content)
+            price = content['price']
+            mood = content['mood']
+            max_price = self.max_price()
+            #цена со скидкой
+            disc = max_price-max_price*0.1
+            if (disc <= price) and mood:
+                display_message(self.aid.localname, "Мы можем вам сделать скидку")
+                display_message(self.aid.localname, "Цена со скидкой будет {} руб.".format(disc))
+                message = ACLMessage()
+                message.set_performative(ACLMessage.ACCEPT_PROPOSAL)
+                message.set_content(json.dumps({'flag': True, 'price': disc, 'mood': False}))
+                message.add_receiver(AID(name="agent_customer@localhost:8011"))
+                self.send(message)
+            else:
+                display_message(self.aid.localname, "Извините, мы не можем для вас снизить цену")
+                message = ACLMessage()
+                message.set_performative(ACLMessage.REJECT_PROPOSAL)
+                message.add_receiver(AID(name="agent_customer@localhost:8011"))
+                self.send(message)
+
+
+if __name__ == '__main__':
+    agents = list()
+    agent_name = 'agent_customer@localhost:8011'
+    agent_customer = Customer(AID(name=agent_name))
+    agent_seller = Seller(AID(name="agent_seller@localhost:8022"))
+    agents.append(agent_customer)
+    agents.append(agent_seller)
+
+    start_loop(agents)
+    
+    Ответ:
+    Случай когда хватает денег:
+    [agent_customer@localhost:8011] 10/01/2021 16:08:19.996 —> Identification process done.
+[agent_seller] 10/01/2021 16:08:29.958 —> Здравствуйте!
+[agent_customer] 10/01/2021 16:08:29.958 —> Здравствуйте!
+[agent_customer] 10/01/2021 16:08:29.973 —> У вас есть торт Прага ?
+[agent_seller] 10/01/2021 16:08:29.992 —> Да
+[agent_customer] 10/01/2021 16:08:30.008 —> Хватит ли мне 988 руб?
+[agent_seller] 10/01/2021 16:08:30.016 —> Он стоит 800 руб.
+[agent_customer] 10/01/2021 16:08:30.024 —> Замечательно!
+[agent_seller] 10/01/2021 16:08:30.032 —> Ваш торт, приятного аппетита!
+
+  случай со скидкой:
+  agent_seller@localhost:8022] 10/01/2021 16:01:01.207 —> Identification process done.
+[agent_seller] 10/01/2021 16:01:11.139 —> Здравствуйте!
+[agent_customer] 10/01/2021 16:01:11.155 —> Здравствуйте!
+[agent_customer] 10/01/2021 16:01:11.163 —> У вас есть торт Медовик ?
+[agent_seller] 10/01/2021 16:01:11.179 —> Да
+[agent_customer] 10/01/2021 16:01:11.196 —> Хватит ли мне 1298 руб?
+[agent_seller] 10/01/2021 16:01:11.211 —> Он стоит 1600 руб.
+[agent_customer] 10/01/2021 16:01:11.211 —> Слишком дорого
+[agent_seller] 10/01/2021 16:01:11.231 —> Мы можем вам сделать скидку
+[agent_seller] 10/01/2021 16:01:11.231 —> Цена со скидкой будет 1440.0 руб.
+[agent_customer] 10/01/2021 16:01:11.231 —> Слишком дорого
+[agent_seller] 10/01/2021 16:01:11.247 —> Извините, мы не можем для вас снизить цену
+[agent_customer] 10/01/2021 16:01:11.247 —> Спасибо, до свидания
