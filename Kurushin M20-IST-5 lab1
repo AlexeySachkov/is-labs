@@ -1,0 +1,101 @@
+%Гончарная мастерская по производству керамических изделий
+
+% База содержит знание о кермическом изделии(его название), тип глины
+% (красная, белая)и температуру, при которой обжигается изделие, нужно
+% ли для него делать молочение и покрывать глазурью, сколько
+% глины нужно
+
+%Изделие, тип глины и температура обжига
+clay_type(turk, red, 1100).
+clay_type(standart, white, 1200).
+clay_type(econom, red, 1100).
+clay_type(evil, red, 1100).
+clay_type(cloud, white, 1200).
+
+%Делается ли молочение для изделия. 0 - нет, 1 - да
+milk(turk, 0).
+milk(standart, 0).
+milk(econom, 0).
+milk(evil, 1).
+milk(cloud, 1).
+
+%Покрывается ли изделие глазурью, 0 - нет, 1 - да
+glaze(turk, 0).
+glaze(standart, 0).
+glaze(econom, 0).
+glaze(evil, 0).
+glaze(cloud, 1).
+
+%Вес изделия
+weight(turk, 300).
+weight(standart, 250).
+weight(econom, 200).
+weight(evil, 300).
+weight(cloud, 400).
+
+
+%Запрос выдает, при какой температуре обжигается изделие
+bake_temp(Name) :- clay_type(Name, _, Temp), format('~w ~s температура обжига для данного изделия ~n', [Temp, "градусов - "]), fail.
+
+%Запрос выдает, для каких изделий требуется больше одного обжига
+bake_more1 :- milk(Name, Milk), Milk=1, write(Name), nl, fail.
+
+% Запрос отвечает, какое изделие можно изготовить, имея определенный вес
+% обределенного типа глины.
+enough_clay(Count, Type_Clay) :- weight(Name, Weight), Weight =< Count, clay_type(Name, Clay_type, _), Clay_type=Type_Clay,  write(Name), nl, fail.
+
+% Запрос отвечает, можно ли обжигать два изделия вместе. Изделия
+% отличаются температурой обжига и обжигать их можно только если
+% температура изделий одинакова.
+bake_together(Name1, Name2) :- clay_type(Name1, Clay_type1, _), clay_type(Name2, Clay_type2, _), Clay_type1=Clay_type2, write("Эти изделия можно обжигать вместе!").
+
+% Этот запрос выдает сколько обжигов нужно для изделия. Обычному изделию
+% требуется один обжиг, для evil - два, потому что кроме утильного
+% необходимо еще сделать молочение, а cloud еще необходимо покрыть
+% глазурью.
+bake_count(Name) :- milk(Name, Milk), glaze(Name, Glaze), (Milk=1, Glaze=1 -> write("Требуется 3 обжига"); Milk=1, Glaze=0 -> write("Требуется 2 обжига"); write("Требуется 1 обжиг")), fail.
+
+
+Запросы:
+% e:/ямагистратура/1 семестр/интелектуальные системы/laba1/laba1.pl compiled 0.00 sec, 0 clauses
+?- bake_temp(turk).
+1100 градусов -  температура обжига для данного изделия 
+false.
+
+?- bake_temp(cloud).
+1200 градусов -  температура обжига для данного изделия 
+false.
+
+?- bake_more1.
+evil
+cloud
+false.
+
+?- enough_clay(300, red).
+turk
+econom
+evil
+false.
+
+?- enough_clay(300, white).
+standart
+false.
+
+?- bake_together(evil, cloud).
+false.
+
+?- bake_together(evil, turk).
+Эти изделия можно обжигать вместе!
+true.
+
+?- bake_count(cloud).
+Требуется 3 обжига
+false.
+
+?- bake_count(evil).
+Требуется 2 обжига
+false.
+
+?- bake_count(turk).
+Требуется 1 обжиг
+false.
