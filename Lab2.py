@@ -1,3 +1,10 @@
+
+# Доставка.
+# Клиент решил оформить доставку от ресторана и одновременно с этим узнать способ доставки и стоимость.
+# Operator - оператор доставки.
+# Client - клиент доставки.
+
+
 import json
 import random
 from pade.acl.messages import ACLMessage
