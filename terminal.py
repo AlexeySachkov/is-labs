@@ -110,15 +110,7 @@ class Saler(Agent):
         if message.performative == ACLMessage.PROPOSE:
             content = json.loads(message.content)
             choose = content['city']
-            if choose == 'Москва':
-                self.day_one = self.days[random.randint(0, 1)]
-                self.day_two = self.days[random.randint(2, 3)]
-                self.day_three = self.days[random.randint(4, 6)]
-            elif choose == 'Питер':
-                self.day_one = self.days[random.randint(0, 1)]
-                self.day_two = self.days[random.randint(2, 3)]
-                self.day_three = self.days[random.randint(4, 6)]
-            else:
+            if choose:
                 self.day_one = self.days[random.randint(0, 1)]
                 self.day_two = self.days[random.randint(2, 3)]
                 self.day_three = self.days[random.randint(4, 6)]
